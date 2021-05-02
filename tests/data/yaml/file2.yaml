@@ -1,0 +1,160 @@
+---
+device:
+  vendor: TEST_VENDOR
+  vendorID: TEST_ID
+  name: TEST_NAME
+  series: TEST_SERIES
+  version: "1.1"
+  description: Test svd file
+  licenseText: MIT License
+  cpu:
+    name: TEST_CPU_NAME
+    revision: r1p2
+    endian: little
+    mpuPresent: True
+    fpuPresent: True
+    fpuDP: True
+    dspPresent: False
+    icachePresent: True
+    dcachePresent: True
+    itcmPresent: False
+    dtcmPresent: False
+    vtorPresent: False
+    nvicPrioBits: 4
+    vendorSystickConfig: False
+    deviceNumInterrupts: 9
+  headerSystemFilename: system_TEST
+  headerDefinitionsPrefix: TEST_
+  addressUnitBits: 8
+  width: 32
+  size: 32
+  access: read-write
+  protection: n
+  resetValue: 0
+  resetMask: 0xffffffff
+  peripherals:
+    - name: TestPeripheral1
+      version: "1.0"
+      description: Test peripheral number 1
+      groupName: Test
+      prependToName: prefix
+      appendToName: suffix
+      headerStructName: TestStructName
+      disableCondition: True == True
+      baseAddress: 0x40002000
+      size: 32
+      access: read-write
+      protection: n
+      resetValue: 0
+      resetMask: 0xffffffff
+      addressBlock:
+        - offset: 0x0
+          size: 0x400
+          usage: registers
+          protection: s
+        - offset: 0x400
+          size: 0x400
+          usage: reserved
+          protection: s
+      interrupt:
+        - name: TEST0_INT
+          value: 34
+        - name: TEST1_INT
+          value: 35
+      registers:
+        register:
+          - name: TEST_MODEA
+            displayName: MODEA
+            description: "In mode A this register acts as a reload value"
+            addressOffset: 0xC
+            size: 32
+            access: "read-write"
+            protection: n
+            resetValue: 0
+            resetMask: 0xFFFFFFFF
+            dataType: "uint32_t *"
+            modifiedWriteValues: modify
+            readAction: clear
+            writeConstraint:
+              writeAsRead: true
+          - name: TEST_MODEA_Alt
+            displayName: MODEA_Alt
+            description: "In mode A this register acts as a reload value"
+            alternateGroup: Test
+            alternateRegister: TEST_MODEA
+            addressOffset: 0xC
+            size: 32
+            access: "read-write"
+            protection: n
+            resetValue: 0
+            resetMask: 0xFFFFFFFF
+            dataType: "uint32_t *"
+            modifiedWriteValues: modify
+            readAction: clear
+            writeConstraint:
+              range:
+                minimum: 2
+                maximum: 4
+          - name: TEST_MODEB
+            displayName: MODEB
+            description: "Test register modeb"
+            addressOffset: 0x12C
+            size: 32
+            access: "write-only"
+            protection: n
+            resetValue: 0
+            resetMask: 0xFFFFFFFF
+            dataType: uint32_t
+            modifiedWriteValues: modify
+            readAction: clear
+            writeConstraint:
+              useEnumeratedValues: true
+    - name: TestPeripheral1_Alt
+      version: "1.0"
+      description: Alternate Test peripheral number 1
+      baseAddress: 0x40002000
+      alternatePeripheral: TestPeripheral1
+      registers:
+        register:
+          - name: TEST_MODEA
+            displayName: MODEA
+            description: "In mode A this register acts as a reload value"
+            addressOffset: 0xC
+            size: 32
+            access: "read-write"
+            protection: n
+            resetValue: 0
+            resetMask: 0xFFFFFFFF
+            dataType: "uint32_t"
+            writeConstraint:
+              writeAsRead: true
+            fields:
+              - name: TestSetField
+                description: "Test description"
+                bitOffset: 1
+                bitWidth: 3
+                access: "read-write"
+                modifiedWriteValues: oneToSet
+                writeConstraint: 
+                  range: 
+                    minimum: 0
+                    maximum: 5
+                readAction: clear
+              - name: TestSetField
+                description: "Test description"
+                bitOffset: 1
+                bitWidth: 3
+                access: "read-write"
+                enumeratedValues:
+                  name: TimerIntSelect
+                  usage: "read-write"
+                  enumeratedValue:
+                    - name: disabled
+                      description: "The clock source clk0 is turned off."
+                      value: 0
+                    - name: enabled
+                      description: "The clock source clk1 is running."
+                      value: 1
+                    - name: reserved
+                      description: "Reserved values. Do not use."
+                      isDefault: true

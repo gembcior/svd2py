@@ -1,0 +1,500 @@
+---
+device:
+  vendor: "Test Ltd."
+  vendorID: Test
+  name: test
+  series: TestSeries
+  version: "1.1"
+  description: "Test svd file"
+  licenseText: "MIT License"
+  cpu:
+    name: CM3
+    revision: r1p2
+    endian: little
+    mpuPresent: true
+    fpuPresent: true
+    fpuDP: true
+    dspPresent: false
+    icachePresent: true
+    dcachePresent: true
+    itcmPresent: false
+    dtcmPresent: false
+    vtorPresent: false
+    nvicPrioBits: 4
+    vendorSystickConfig: false
+    deviceNumInterrupts: 9
+  headerSystemFilename: system_TEST
+  headerDefinitionsPrefix: TEST_
+  addressUnitBits: 32
+  width: 32
+  size: 32
+  access: "read-write"
+  protection: n
+  resetValue: 0
+  resetMask: 0xffffffff
+  peripherals:
+    - name: TestPeripheral1
+      version: "1.0"
+      description: "Test peripheral number 1"
+      groupName: Test
+      prependToName: prefix
+      appendToName: suffix
+      headerStructName: TestStructName
+      disableCondition: "True == True"
+      baseAddress: 0x40002000
+      size: 32
+      access: "read-write"
+      resetValue: 0
+      resetMask: 0xffffffff
+      addressBlock:
+        - offset: 0x0
+          size: 0x400
+          usage: registers
+        - offset: 0x400
+          size: 0x400
+          usage: reserved
+      interrupt:
+        - name: TEST0
+          value: 1
+          description: "Test interrupt 0"
+        - name: TEST1
+          value: 2
+          description: "Test interrupt 1"
+      registers:
+        register:
+          - name: TEST_MODEA
+            displayName: MODEA
+            description: "Test register MODEA"
+            addressOffset: 0xC
+            size: 32
+            access: "read-write"
+            protection: n
+            resetValue: 0
+            resetMask: 0xFFFFFFFF
+            dataType: "uint32_t *"
+            modifiedWriteValues: modify
+            readAction: clear
+            fields:
+              - name: TestFieldEnum0
+                description: "Test field enumerated value 0"
+                bitOffset: 10
+                bitWidth: 4
+                access: "read-write"
+                enumeratedValues:
+                  name: TestEnumValue0
+                  usage: "read-write"
+                  enumeratedValue:
+                    - name: disabled
+                      description: "Disable device"
+                      value: 0
+                    - name: enabled
+                      description: "Enable device"
+                      value: 1
+                      isDefault: true
+              - name: TestFieldEnum1
+                description: "Test field enumerated value 1"
+                bitOffset: 5
+                bitWidth: 4
+                access: "read-write"
+                writeConstraint:
+                  useEnumeratedValues: true
+                enumeratedValues:
+                  name: TestEnumValue1
+                  usage: "read-write"
+                  enumeratedValue:
+                    - name: disabled
+                      description: "Disable device"
+                      value: 0
+                      isDefault: true
+                    - name: enabled
+                      description: "Enable device"
+                      value: 1
+          - name: TEST_MODEB
+            displayName: MODEB
+            description: "Test register MODEB"
+            addressOffset: 0x10
+            size: 32
+            access: "read-write"
+            protection: n
+            resetValue: 0
+            resetMask: 0xFFFFFFFF
+            dataType: "uint32_t *"
+            modifiedWriteValues: modify
+            readAction: clear
+            fields:
+              - name: TestField0
+                description: "Test field 0"
+                bitOffset: 23
+                bitWidth: 1
+                writeConstraint:
+                  writeAsRead: true
+              - name: TestField1
+                description: "Test field 1"
+                bitOffset: 22
+                bitWidth: 1
+              - name: TestField2
+                description: "Test field 2"
+                bitOffset: 16
+                bitWidth: 2
+              - name: TestField3
+                description: "Test field 3"
+                bitOffset: 14
+                bitWidth: 2
+              - name: TestField4
+                description: "Test field 4"
+                bitOffset: 13
+                bitWidth: 1
+              - name: TestField5
+                description: "Test field 5"
+                bitOffset: 4
+                bitWidth: 1
+          - name: TEST_MODEA_Derived
+            displayName: MODEA_Derived
+            description: "Test register MODEA derived"
+            addressOffset: 0x34
+            size: 32
+            access: "read-write"
+            protection: n
+            resetValue: 0
+            resetMask: 0xFFFFFFFF
+            dataType: "uint32_t *"
+            modifiedWriteValues: modify
+            readAction: clear
+            fields:
+              - name: TestFieldEnum0
+                description: "Test field enumerated value 0"
+                bitOffset: 10
+                bitWidth: 4
+                access: "read-write"
+                enumeratedValues:
+                  name: TestEnumValue0
+                  usage: "read-write"
+                  enumeratedValue:
+                    - name: disabled
+                      description: "Disable device"
+                      value: 0
+                    - name: enabled
+                      description: "Enable device"
+                      value: 1
+                      isDefault: true
+              - name: TestFieldEnum1
+                description: "Test field enumerated value 1"
+                bitOffset: 5
+                bitWidth: 4
+                access: "read-write"
+                writeConstraint:
+                  useEnumeratedValues: true
+                enumeratedValues:
+                  name: TestEnumValue1
+                  usage: "read-write"
+                  enumeratedValue:
+                    - name: disabled
+                      description: "Disable device"
+                      value: 0
+                      isDefault: true
+                    - name: enabled
+                      description: "Enable device"
+                      value: 1
+    - name: TestPeripheral1_Derived
+      baseAddress: 0x40004000
+      version: "1.0"
+      description: "Test peripheral number 1"
+      groupName: Test
+      prependToName: prefix
+      appendToName: suffix
+      headerStructName: TestStructName
+      disableCondition: "True == True"
+      size: 32
+      access: "read-write"
+      resetValue: 0
+      resetMask: 0xffffffff
+      addressBlock:
+        - offset: 0x0
+          size: 0x400
+          usage: registers
+        - offset: 0x400
+          size: 0x400
+          usage: reserved
+      interrupt:
+        - name: TEST0
+          value: 1
+          description: "Test interrupt 0"
+        - name: TEST1
+          value: 2
+          description: "Test interrupt 1"
+      registers:
+        register:
+          - name: TEST_MODEA
+            displayName: MODEA
+            description: "Test register MODEA"
+            addressOffset: 0xC
+            size: 32
+            access: "read-write"
+            protection: n
+            resetValue: 0
+            resetMask: 0xFFFFFFFF
+            dataType: "uint32_t *"
+            modifiedWriteValues: modify
+            readAction: clear
+            fields:
+              - name: TestFieldEnum0
+                description: "Test field enumerated value 0"
+                bitOffset: 10
+                bitWidth: 4
+                access: "read-write"
+                enumeratedValues:
+                  name: TestEnumValue0
+                  usage: "read-write"
+                  enumeratedValue:
+                    - name: disabled
+                      description: "Disable device"
+                      value: 0
+                    - name: enabled
+                      description: "Enable device"
+                      value: 1
+                      isDefault: true
+              - name: TestFieldEnum1
+                description: "Test field enumerated value 1"
+                bitOffset: 5
+                bitWidth: 4
+                access: "read-write"
+                writeConstraint:
+                  useEnumeratedValues: true
+                enumeratedValues:
+                  name: TestEnumValue1
+                  usage: "read-write"
+                  enumeratedValue:
+                    - name: disabled
+                      description: "Disable device"
+                      value: 0
+                      isDefault: true
+                    - name: enabled
+                      description: "Enable device"
+                      value: 1
+          - name: TEST_MODEB
+            displayName: MODEB
+            description: "Test register MODEB"
+            addressOffset: 0x10
+            size: 32
+            access: "read-write"
+            protection: n
+            resetValue: 0
+            resetMask: 0xFFFFFFFF
+            dataType: "uint32_t *"
+            modifiedWriteValues: modify
+            readAction: clear
+            fields:
+              - name: TestField0
+                description: "Test field 0"
+                bitOffset: 23
+                bitWidth: 1
+                writeConstraint:
+                  writeAsRead: true
+              - name: TestField1
+                description: "Test field 1"
+                bitOffset: 22
+                bitWidth: 1
+              - name: TestField2
+                description: "Test field 2"
+                bitOffset: 16
+                bitWidth: 2
+              - name: TestField3
+                description: "Test field 3"
+                bitOffset: 14
+                bitWidth: 2
+              - name: TestField4
+                description: "Test field 4"
+                bitOffset: 13
+                bitWidth: 1
+              - name: TestField5
+                description: "Test field 5"
+                bitOffset: 4
+                bitWidth: 1
+          - name: TEST_MODEA_Derived
+            displayName: MODEA_Derived
+            description: "Test register MODEA derived"
+            addressOffset: 0x34
+            size: 32
+            access: "read-write"
+            protection: n
+            resetValue: 0
+            resetMask: 0xFFFFFFFF
+            dataType: "uint32_t *"
+            modifiedWriteValues: modify
+            readAction: clear
+            fields:
+              - name: TestFieldEnum0
+                description: "Test field enumerated value 0"
+                bitOffset: 10
+                bitWidth: 4
+                access: "read-write"
+                enumeratedValues:
+                  name: TestEnumValue0
+                  usage: "read-write"
+                  enumeratedValue:
+                    - name: disabled
+                      description: "Disable device"
+                      value: 0
+                    - name: enabled
+                      description: "Enable device"
+                      value: 1
+                      isDefault: true
+              - name: TestFieldEnum1
+                description: "Test field enumerated value 1"
+                bitOffset: 5
+                bitWidth: 4
+                access: "read-write"
+                writeConstraint:
+                  useEnumeratedValues: true
+                enumeratedValues:
+                  name: TestEnumValue1
+                  usage: "read-write"
+                  enumeratedValue:
+                    - name: disabled
+                      description: "Disable device"
+                      value: 0
+                      isDefault: true
+                    - name: enabled
+                      description: "Enable device"
+                      value: 1
+    - name: TestPeripheral2
+      version: "1.2"
+      description: "Test peripheral number 2"
+      groupName: Test
+      prependToName: prefix
+      appendToName: suffix
+      headerStructName: TestStructName2
+      disableCondition: "True == True"
+      baseAddress: 0x40008000
+      size: 32
+      access: "read-write"
+      resetValue: 0
+      resetMask: 0xffffffff
+      addressBlock:
+        - offset: 0x0
+          size: 0x400
+          usage: registers
+      interrupt:
+        - name: TEST4
+          value: 4
+          description: "Test interrupt 4"
+      registers:
+        register:
+          - name: TEST_MODEC
+            displayName: MODEC
+            description: "Test register MODEC"
+            addressOffset: 0x1C
+            size: 32
+            access: "read-write"
+            protection: n
+            resetValue: 0
+            resetMask: 0xFFFFFFFF
+            dataType: "uint32_t *"
+            modifiedWriteValues: modify
+            readAction: clear
+            fields:
+              - name: TestFieldEnum0
+                description: "Test field enumerated value 0"
+                bitOffset: 10
+                bitWidth: 4
+                access: "read-write"
+                enumeratedValues:
+                  name: TestEnumValue0
+                  usage: "read-write"
+                  enumeratedValue:
+                    - name: disabled
+                      description: "Disable device"
+                      value: 0
+                    - name: enabled
+                      description: "Enable device"
+                      value: 1
+                      isDefault: true
+              - name: TestFieldEnum1
+                description: "Test field enumerated value 1"
+                bitOffset: 5
+                bitWidth: 4
+                access: "read-write"
+                writeConstraint:
+                  useEnumeratedValues: true
+                enumeratedValues:
+                  name: TestEnumValue1
+                  usage: "read-write"
+                  enumeratedValue:
+                    - name: disabled
+                      description: "Disable device"
+                      value: 0
+                      isDefault: true
+                    - name: enabled
+                      description: "Enable device"
+                      value: 1
+          - name: TEST_MODED
+            displayName: MODED
+            description: "Test register MODED"
+            addressOffset: 0x2C
+            size: 32
+            access: "read-write"
+            protection: n
+            resetValue: 0
+            resetMask: 0xFFFFFFFF
+            dataType: "uint32_t *"
+            modifiedWriteValues: modify
+            readAction: clear
+            fields:
+              - name: TestField0
+                description: "Test field 0"
+                bitOffset: 23
+                bitWidth: 1
+                writeConstraint:
+                  writeAsRead: true
+              - name: TestField1
+                description: "Test field 1"
+                bitOffset: 22
+                bitWidth: 1
+              - name: TestField2
+                description: "Test field 2"
+                bitOffset: 16
+                bitWidth: 2
+              - name: TestField3
+                description: "Test field 3"
+                bitOffset: 14
+                bitWidth: 2
+              - name: TestField4
+                description: "Test field 4"
+                bitOffset: 13
+                bitWidth: 1
+              - name: TestField5
+                description: "Test field 5"
+                bitOffset: 4
+                bitWidth: 1
+          - name: TEST_MODEF
+            displayName: MODEF
+            description: "Test register MODEF"
+            addressOffset: 0x40
+            size: 32
+            access: "read-write"
+            resetValue: 0
+            resetMask: 0xFFFFFFFF
+            dataType: "uint32_t *"
+            modifiedWriteValues: modify
+            readAction: clear
+            fields:
+              - name: TestFieldEnum5
+                description: "Test field enum 5"
+                bitOffset: 10
+                bitWidth: 4
+                access: "read-write"
+                enumeratedValues:
+                  name: TestEnumValue0
+                  usage: "read-write"
+                  enumeratedValue:
+                    - name: disabled
+                      description: "Disable device"
+                      value: 0
+                    - name: enabled
+                      description: "Enable device"
+                      value: 1
+                      isDefault: true
+              - name: TestField6
+                description: "Test field 6"
+                bitOffset: 4
+                bitWidth: 1

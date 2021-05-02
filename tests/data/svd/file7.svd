@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<device schemaVersion="1.3" xmlns:xs="http://www.w3.org/2001/XMLSchema-instance" xs:noNamespaceSchemaLocation="CMSIS-SVD.xsd">
+  <vendor>Test Ltd.</vendor>
+  <vendorID>Test</vendorID>
+  <name>test</name>
+  <series>TestSeries</series>
+  <version>1.1</version>
+  <description>Test svd file</description>
+  <licenseText>MIT License</licenseText>
+  <cpu>
+    <name>CM3</name>
+    <revision>r1p2</revision>
+    <endian>little</endian>
+    <mpuPresent>true</mpuPresent>
+    <fpuPresent>true</fpuPresent>
+    <fpuDP>true</fpuDP>
+    <dspPresent>false</dspPresent>
+    <icachePresent>true</icachePresent>
+    <dcachePresent>true</dcachePresent>
+    <itcmPresent>false</itcmPresent>
+    <dtcmPresent>false</dtcmPresent>
+    <vtorPresent>false</vtorPresent>
+    <nvicPrioBits>4</nvicPrioBits>
+    <vendorSystickConfig>false</vendorSystickConfig>
+    <deviceNumInterrupts>9</deviceNumInterrupts>
+<!-- Add sauNumRegions and sauRegionsConfig -->
+  </cpu>
+  <headerSystemFilename>system_TEST</headerSystemFilename>
+  <headerDefinitionsPrefix>TEST_</headerDefinitionsPrefix>
+  <addressUnitBits>32</addressUnitBits>
+  <width>32</width>
+  <size>32</size>
+  <access>read-write</access>
+  <protection>n</protection>
+  <resetValue>0</resetValue>
+  <resetMask>0xffffffff</resetMask>
+  <peripherals>
+    <peripheral>
+      <name>TestPeripheral1</name>
+      <version>1.0</version>
+      <description>Test peripheral number 1</description>
+      <groupName>Test</groupName>
+      <prependToName>prefix</prependToName>
+      <appendToName>suffix</appendToName>
+      <headerStructName>TestStructName</headerStructName>
+      <disableCondition>True == True</disableCondition>
+      <baseAddress>0x40002000</baseAddress>
+      <size>32</size>
+      <access>read-write</access>
+      <resetValue>0</resetValue>
+      <resetMask>0xffffffff</resetMask>
+      <addressBlock>
+        <offset>0x0</offset>
+        <size>0x400</size>
+        <usage>registers</usage>
+      </addressBlock>
+      <addressBlock>
+        <offset>0x400</offset>
+        <size>0x400</size>
+        <usage>reserved</usage>
+      </addressBlock>
+      <interrupt>
+        <name>TEST0</name>
+        <value>1</value>
+        <description>Test interrupt 0</description>
+      </interrupt>
+      <interrupt>
+        <name>TEST1</name>
+        <value>2</value>
+        <description>Test interrupt 1</description>
+      </interrupt>
+      <registers>
+        <register>
+          <dim>3</dim>
+          <dimIncrement>4</dimIncrement>
+          <dimIndex>A,B,C</dimIndex>
+          <name>TEST_MODE_%s</name>
+          <displayName>MODE_%s</displayName>
+          <description>Test register MODEA</description>
+          <addressOffset>0xC</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <protection>n</protection>
+          <resetValue>0</resetValue>
+          <resetMask>0xFFFFFFFF</resetMask>
+          <dataType>uint32_t *</dataType>
+          <modifiedWriteValues>modify</modifiedWriteValues>
+          <readAction>clear</readAction>
+          <fields>
+            <field>
+              <dim>3</dim>
+              <dimIncrement>4</dimIncrement>
+              <dimIndex>2-4</dimIndex>
+              <name>TestFieldEnum%s</name>
+              <description>Test field enumerated value 0</description>
+              <bitOffset>10</bitOffset>
+              <bitWidth>4</bitWidth>
+              <access>read-write</access>
+              <enumeratedValues>
+                  <name>TestEnumValue0</name>
+                  <usage>read-write</usage>
+                  <enumeratedValue>
+                      <name>disabled</name>
+                      <description>Disable device</description>
+                      <value>0</value>
+                  </enumeratedValue>
+                  <enumeratedValue>
+                      <name>enabled</name>
+                      <description>Enable device</description>
+                      <value>1</value>
+                      <isDefault>true</isDefault>
+                  </enumeratedValue>
+              </enumeratedValues>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <dim>2</dim>
+          <dimIncrement>8</dimIncrement>
+          <name>TEST_MODEB[%s]</name>
+          <displayName>MODEB%s</displayName>
+          <description>Test register MODEB</description>
+          <addressOffset>0x10</addressOffset>
+          <size>32</size>
+          <access>read-write</access>
+          <protection>n</protection>
+          <resetValue>0</resetValue>
+          <resetMask>0xFFFFFFFF</resetMask>
+          <dataType>uint32_t *</dataType>
+          <modifiedWriteValues>modify</modifiedWriteValues>
+          <readAction>clear</readAction>
+          <fields>
+            <field>
+              <name>TestField0</name>
+              <description>Test field 0</description>
+              <bitOffset>23</bitOffset>
+              <bitWidth>1</bitWidth>
+              <writeConstraint>
+                <writeAsRead>true</writeAsRead>
+              </writeConstraint>
+            </field>
+            <field>
+              <name>TestField1</name>
+              <description>Test field 1</description>
+              <bitOffset>22</bitOffset>
+              <bitWidth>1</bitWidth>
+            </field>
+          </fields>
+        </register>
+      </registers>
+    </peripheral>
+  </peripherals>
+</device>

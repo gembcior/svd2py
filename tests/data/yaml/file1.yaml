@@ -1,0 +1,35 @@
+---
+device:
+  vendor: Test Ltd.
+  vendorID: Test
+  name: file1
+  series: TestSeries
+  version: "1.1"
+  description: Test svd file
+  licenseText: MIT License
+  cpu:
+    name: CM3
+    revision: r1p2
+    endian: little
+    mpuPresent: True
+    fpuPresent: True
+    fpuDP: True
+    dspPresent: False
+    icachePresent: True
+    dcachePresent: True
+    itcmPresent: False
+    dtcmPresent: False
+    vtorPresent: False
+    nvicPrioBits: 4
+    vendorSystickConfig: False
+    deviceNumInterrupts: 9
+  headerSystemFilename: system_TEST
+  headerDefinitionsPrefix: TEST_
+  addressUnitBits: 8
+  width: 32
+  size: 32
+  access: read-write
+  protection: n
+  resetValue: 0
+  resetMask: 0xffffffff
+  peripherals: []
