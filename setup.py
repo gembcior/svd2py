@@ -1,25 +1,17 @@
 import setuptools
-import os
 
 
-try:
-    import pypandoc
-    readme = pypandoc.convert_file("README.md","rst")
-except(IOError, ImportError):
-    with open("README.md", "r") as f:
-        readme = f.read()
-
-with open('LICENSE', "r") as f:
-    license = f.read()
+with open("README.md", "r", encoding="utf-8") as f:
+    readme = f.read()
 
 
 setuptools.setup(
     name="svd2py",
     author="Gembcior",
     author_email="gembcior@gmail.com",
-    description="Converter CMSIS SVD file format to python data structures",
-    url="https://github.com/gembcior/cmsis-svd",
-    license=license,
+    description='Simple parser that allows to convert CMSIS SVD file format to python data structure',
+    url="https://github.com/gembcior/svd2py",
+    long_description_content_type="text/markdown",
     long_description=readme,
     classifiers=[
         "License :: MIT",
@@ -30,21 +22,20 @@ setuptools.setup(
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
     ],
+    license="MIT",
     python_requires='>=3.6',
     setup_requires=['setuptools_scm'],
-    install_requires=[
-    ],
     extras_require={
         'tests': [
             'pyyaml',
             'pytest',
-            'pytest-sugar'
-            'pytest-cov'
-            'pytest-clarity'
+            'pytest-sugar',
+            'pytest-cov',
+            'pytest-clarity',
         ],
     },
     use_scm_version=True,
     include_package_data=True,
     packages=setuptools.find_packages('src'),
-    package_dir={'': 'src'},
+    package_dir={'': 'src'}
 )
