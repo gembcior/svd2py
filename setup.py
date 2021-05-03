@@ -2,8 +2,12 @@ import setuptools
 import os
 
 
-with open("README.md", "r") as f:
-    readme = f.read()
+try:
+    import pypandoc
+    readme = pypandoc.convert_file("README.md","rst")
+except(IOError, ImportError):
+    with open("README.md", "r") as f:
+        readme = f.read()
 
 with open('LICENSE', "r") as f:
     license = f.read()
