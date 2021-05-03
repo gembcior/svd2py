@@ -55,7 +55,7 @@ Let's assume you have following element in you SVD file:
 ```
 
 This will be converted to python like this:
-```python
+```
 result = {
   "device": {
     ...
@@ -111,7 +111,7 @@ import svd2py
 
 svd_file = "sample.svd"
 # Create SvdParser object passing path to SVD file
-parser = SvdParser(svd_file)
+parser = svd2py.SvdParser(svd_file)
 # Invoke conver() function
 result = parser.convert()
 ```
@@ -123,6 +123,3 @@ class svd2py.**SvdParser**(svd)<br>
 &nbsp;&nbsp;**convert()**<br>
 &nbsp;&nbsp;&nbsp;&nbsp;Convert SVD file and return content in python data structure.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;It does not check SVD file syntax. If it is a proper XML file it will always return something.
-
-### Contribution
-
