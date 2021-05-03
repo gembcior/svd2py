@@ -14,7 +14,7 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     long_description=readme,
     classifiers=[
-        "License :: MIT",
+        "License :: OSI Approved :: MIT License",
         "Operating System :: Unix",
         "Operating System :: POSIX",
         "Programming Language :: Python :: 3",
