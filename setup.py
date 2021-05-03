@@ -21,7 +21,6 @@ setuptools.setup(
     url="https://github.com/gembcior/cmsis-svd",
     license=license,
     long_description=readme,
-    long_description_content_type="text/markdown",
     classifiers=[
         "License :: MIT",
         "Operating System :: Unix",
