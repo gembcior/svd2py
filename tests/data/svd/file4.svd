@@ -32,7 +32,7 @@
   <access>read-write</access>
   <protection>n</protection>
   <resetValue>0</resetValue>
-  <resetMask>0xffffffff</resetMask>
+  <resetMask>0Xffffffff</resetMask>
   <peripherals>
 
     <peripheral>

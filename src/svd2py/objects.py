@@ -17,7 +17,7 @@ class SvdElement(ABC):
             value = root.find(element)
             if value is not None:
                 if element_type == "int":
-                    if value.text.startswith("0x"):
+                    if value.text.lower().startswith("0x"):
                         result[element] = int(value.text, 16)
                     else:
                         result[element] = int(value.text)
