@@ -1,26 +1,33 @@
-## Svd2Py
+![Logo](https://raw.githubusercontent.com/gembcior/svd2py/main/doc/logo.svg)
 
-### Introduction
-Simple parser that allows to convert CMSIS SVD file format to python data structure.
+<h1 align="center">svd2py - Convert CMSIS SVD file Python data structure</h1>
+
+[![PyPI](https://img.shields.io/pypi/v/svd2py?label=svd2py)](https://pypi.org/project/svd2py/)
+[![PyPI - License](https://img.shields.io/pypi/l/svd2py)](https://pypi.org/project/svd2py/)
+[![Supported Python Versions](https://img.shields.io/pypi/pyversions/svd2py)](https://pypi.org/project/svd2py/)
+[![PyPI - Format](https://img.shields.io/pypi/format/svd2py)](https://pypi.org/project/svd2py/)
+[![PyPI - Wheel](https://img.shields.io/pypi/wheel/svd2py)](https://pypi.org/project/svd2py/)
+
+---
+
+## Introduction
+Parser that allows to convert CMSIS SVD file format to python data structure.
 Parser does not check SVD file syntax. It assume that parsing file is a proper SVD file.
 
->:exclamation: Notice:<br>
->Please bare in mind that this project was created for another project. I treat it as MPV (Minimum Viable Product) project. I implemented only necessary features to go on with another project. Please go to [How it works](#how-it-works) to see what features are missing.
-
-### Project structure
+## Project structure
 ```
 📦Svd2Py
- ┣━📂src            ─ python sources
- ┃ ┗━📂svd2py
+ ┣━📂doc            ─ Documentation
+ ┣━📂svd2py         ─ Python sources
  ┣━📂tests          ─ pytest tests
- ┗━📜setup.py
+ ┗━📜pyproject.toml
 ```
 
-### How it works
+## How it works
 The parser translate SVD elements directly to python data structures like dictionaries and list and resolves elements attributes.
 
 :white_check_mark: It does following thing:
- - Translate SVD elements directly to python data structures (dict and list),
+ - Translate SVD elements directly to Python data structures (dict and list),
  - Resolves *derivedFrom* element attribute,
  - Parses and resolves *dimElementGroup*,
 
@@ -54,7 +61,7 @@ Let's assume you have following element in you SVD file:
 ...
 ```
 
-This will be converted to python like this:
+This will be converted to Python like this:
 ```
 result = {
   "device": {
@@ -100,12 +107,12 @@ result = {
 }
 ```
 
-### How to install
+## How to install
 ``` shell
 pip install svd2py
 ```
 
-### How to use
+## How to use
 ```python
 import svd2py
 
@@ -116,7 +123,7 @@ parser = svd2py.SvdParser(svd_file)
 result = parser.convert()
 ```
 
-### Reference
+## Reference
 class svd2py.**SvdParser**(svd)<br>
 &nbsp;&nbsp;SVD file parser class. This is the main class for parsing SVD files.<br><br>
 &nbsp;&nbsp;*svd* - path to SVD file to parse.<br><br>

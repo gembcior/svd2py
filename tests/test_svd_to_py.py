@@ -1,7 +1,7 @@
-from xml.etree import ElementTree as ET
 import svd2py
 import yaml
 import pytest
+from rich import print
 
 
 class TestCmsisSvdToPy:

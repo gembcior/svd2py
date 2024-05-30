@@ -3,7 +3,11 @@
 **/.eggs
 **/venv
 **/__pycache__
-**.coverage
-**/build
-**/dist
-**/README
+/dist
+.coverage
+**/dralOutput
+**/.tox
+**/.mypy_cache
+**/.pytest_cache
+venv
+.venv

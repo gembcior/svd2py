@@ -1,5 +1,8 @@
-from .objects import SvdDevice
+from __future__ import annotations
+
 from xml.etree import ElementTree as ET
+
+from .objects import SvdDevice
 
 
 class SvdParser:
@@ -86,5 +89,5 @@ class SvdParser:
     def convert(self):
         device = SvdDevice(self._svd_tree_root)
         self._data = device.parse()
-        self._data = self._parse_derived_elements(self._data)
+        # self._data = self._parse_derived_elements(self._data)
         return self._data
