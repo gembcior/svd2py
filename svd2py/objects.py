@@ -207,9 +207,6 @@ class SvdElement(ABC):
 
 
 class SvdField(SvdElement):
-    def __init__(self, root):
-        super().__init__(root)
-
     @property
     def attributes(self) -> List[SvdAttribute]:
         return [
@@ -240,9 +237,6 @@ class SvdField(SvdElement):
 
 
 class SvdFields(SvdElement):
-    def __init__(self, root: ET.Element):
-        super().__init__(root)
-
     @property
     def attributes(self) -> List[SvdAttribute]:
         return []
@@ -255,9 +249,6 @@ class SvdFields(SvdElement):
 
 
 class SvdWriteConstraint(SvdElement):
-    def __init__(self, root: ET.Element):
-        super().__init__(root)
-
     @property
     def attributes(self) -> List[SvdAttribute]:
         return []
@@ -272,9 +263,6 @@ class SvdWriteConstraint(SvdElement):
 
 
 class SvdRegister(SvdElement):
-    def __init__(self, root: ET.Element):
-        super().__init__(root)
-
     @property
     def attributes(self) -> List[SvdAttribute]:
         return [
@@ -309,9 +297,6 @@ class SvdRegister(SvdElement):
 
 
 class SvdCluster(SvdElement):
-    def __init__(self, root: ET.Element):
-        super().__init__(root)
-
     @property
     def attributes(self) -> List[SvdAttribute]:
         return [
@@ -342,9 +327,6 @@ class SvdCluster(SvdElement):
 
 
 class SvdRegisters(SvdElement):
-    def __init__(self, root: ET.Element):
-        super().__init__(root)
-
     @property
     def attributes(self) -> List[SvdAttribute]:
         return []
@@ -358,9 +340,6 @@ class SvdRegisters(SvdElement):
 
 
 class SvdEnumeratedValue(SvdElement):
-    def __init__(self, root: ET.Element):
-        super().__init__(root)
-
     @property
     def attributes(self) -> List[SvdAttribute]:
         return []
@@ -376,9 +355,6 @@ class SvdEnumeratedValue(SvdElement):
 
 
 class SvdEnumeratedValues(SvdElement):
-    def __init__(self, root: ET.Element):
-        super().__init__(root)
-
     @property
     def attributes(self) -> List[SvdAttribute]:
         return [
@@ -396,9 +372,6 @@ class SvdEnumeratedValues(SvdElement):
 
 
 class SvdDimArrayIndex(SvdElement):
-    def __init__(self, root: ET.Element):
-        super().__init__(root)
-
     @property
     def attributes(self) -> List[SvdAttribute]:
         return []
@@ -412,9 +385,6 @@ class SvdDimArrayIndex(SvdElement):
 
 
 class SvdAddressBlock(SvdElement):
-    def __init__(self, root: ET.Element):
-        super().__init__(root)
-
     @property
     def attributes(self) -> List[SvdAttribute]:
         return []
@@ -430,9 +400,6 @@ class SvdAddressBlock(SvdElement):
 
 
 class SvdInterrupt(SvdElement):
-    def __init__(self, root):
-        super().__init__(root)
-
     @property
     def attributes(self) -> List[SvdAttribute]:
         return []
@@ -447,9 +414,6 @@ class SvdInterrupt(SvdElement):
 
 
 class SvdPeripheral(SvdElement):
-    def __init__(self, root: ET.Element):
-        super().__init__(root)
-
     @property
     def attributes(self) -> List[SvdAttribute]:
         return [
@@ -486,9 +450,6 @@ class SvdPeripheral(SvdElement):
 
 
 class SvdPeripherals(SvdElement):
-    def __init__(self, root: ET.Element):
-        super().__init__(root)
-
     @property
     def attributes(self) -> List[SvdAttribute]:
         return []
@@ -501,9 +462,6 @@ class SvdPeripherals(SvdElement):
 
 
 class SvdSauRegion(SvdElement):
-    def __init__(self, root: ET.Element):
-        super().__init__(root)
-
     @property
     def attributes(self) -> List[SvdAttribute]:
         return [
@@ -521,9 +479,6 @@ class SvdSauRegion(SvdElement):
 
 
 class SvdSauRegionsConfig(SvdElement):
-    def __init__(self, root: ET.Element):
-        super().__init__(root)
-
     @property
     def attributes(self) -> List[SvdAttribute]:
         return [
@@ -539,9 +494,6 @@ class SvdSauRegionsConfig(SvdElement):
 
 
 class SvdCpu(SvdElement):
-    def __init__(self, root: ET.Element):
-        super().__init__(root)
-
     @property
     def attributes(self) -> List[SvdAttribute]:
         return []
@@ -570,9 +522,6 @@ class SvdCpu(SvdElement):
 
 
 class SvdDevice(SvdElement):
-    def __init__(self, root: ET.Element):
-        super().__init__(root)
-
     @property
     def attributes(self) -> List[SvdAttribute]:
         return [
