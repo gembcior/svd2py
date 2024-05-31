@@ -3,7 +3,7 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from distutils.util import strtobool
-from typing import Any, Dict, List, Optional
+from typing import Any, Callable, Dict, List
 from xml.etree import ElementTree as ET
 
 
@@ -33,125 +33,56 @@ class SvdTypeParser:
 class SvdAttributeParser(SvdTypeParser):
     def __init__(self, root: Dict[str, str]):
         self._root = root
+        self._mapping: Dict[str, Callable] = {
+            "int": self._get_int,
+            "bool": self._get_bool,
+            "string": lambda x: x,
+        }
 
     def __call__(self, attribute: SvdAttribute) -> Any:
         value = self._root.get(attribute.name)
         if value is None:
             return None
-        if attribute.datatype == "int":
-            return self._get_int(value)
-        elif attribute.datatype == "bool":
-            return self._get_bool(value)
-        return value
+        try:
+            return self._mapping[attribute.datatype](value)
+        except KeyError:
+            raise NotImplementedError(f"Attribute type {attribute.datatype} not implemented")
 
 
 class SvdElementParser(SvdTypeParser):
     def __init__(self, root: ET.Element):
         self._root = root
-
-    def _get_range(self, value: ET.Element) -> Optional[Dict]:
-        minimum = value.find("minimum")
-        if minimum is None or minimum.text is None:
-            return None
-        maximum = value.find("maximum")
-        if maximum is None or maximum.text is None:
-            return None
-        return {"minimum": self._get_int(minimum.text), "maximum": self._get_int(maximum.text)}
-
-    def _get_cpu(self, value: ET.Element) -> "SvdCpu":
-        return SvdCpu(value)
-
-    def _get_sau_regions_config(self, value: ET.Element) -> "SvdSauRegionsConfig":
-        return SvdSauRegionsConfig(value)
-
-    def _get_sau_region(self, value: ET.Element) -> "SvdSauRegion":
-        return SvdSauRegion(value)
-
-    def _get_peripherals(self, value: ET.Element) -> "SvdPeripherals":
-        return SvdPeripherals(value)
-
-    def _get_peripheral(self, value: ET.Element) -> "SvdPeripheral":
-        return SvdPeripheral(value)
-
-    def _get_address_block(self, value: ET.Element) -> "SvdAddressBlock":
-        return SvdAddressBlock(value)
-
-    def _get_interrupt(self, value: ET.Element) -> "SvdInterrupt":
-        return SvdInterrupt(value)
-
-    def _get_enumerated_values(self, value: ET.Element) -> "SvdEnumeratedValues":
-        return SvdEnumeratedValues(value)
-
-    def _get_enumerated_value(self, value: ET.Element) -> "SvdEnumeratedValue":
-        return SvdEnumeratedValue(value)
-
-    def _get_dim_array_index(self, value: ET.Element) -> "SvdDimArrayIndex":
-        return SvdDimArrayIndex(value)
-
-    def _get_registers(self, value: ET.Element) -> "SvdRegisters":
-        return SvdRegisters(value)
-
-    def _get_register(self, value: ET.Element) -> "SvdRegister":
-        return SvdRegister(value)
-
-    def _get_fields(self, value: ET.Element) -> "SvdFields":
-        return SvdFields(value)
-
-    def _get_field(self, value: ET.Element) -> "SvdField":
-        return SvdField(value)
-
-    def _get_cluster(self, value: ET.Element) -> "SvdCluster":
-        return SvdCluster(value)
-
-    def _get_write_constraint(self, value: ET.Element) -> "SvdWriteConstraint":
-        return SvdWriteConstraint(value)
+        self._mapping: Dict[str, Callable] = {
+            "int": lambda x: self._get_int(x.text),
+            "bool": lambda x: self._get_bool(x.text),
+            "string": lambda x: x.text,
+            "range": SvdRange,
+            "cpu": SvdCpu,
+            "sauRegionsConfig": SvdSauRegionsConfig,
+            "sauRegion": SvdSauRegion,
+            "peripherals": SvdPeripherals,
+            "peripheral": SvdPeripheral,
+            "addressBlock": SvdAddressBlock,
+            "interrupt": SvdInterrupt,
+            "registers": SvdRegisters,
+            "register": SvdRegister,
+            "fields": SvdFields,
+            "field": SvdField,
+            "writeConstraint": SvdWriteConstraint,
+            "enumeratedValues": SvdEnumeratedValues,
+            "enumeratedValue": SvdEnumeratedValue,
+            "dimArrayIndex": SvdDimArrayIndex,
+            "cluster": SvdCluster,
+        }
 
     def __call__(self, element: SvdChildElement) -> Any:
         output = []
         for value in self._root.findall(element.name):
             if value is None or value.text is None:
                 continue
-            if element.datatype == "int":
-                output.append(self._get_int(value.text))
-            elif element.datatype == "bool":
-                output.append(self._get_bool(value.text))
-            elif element.datatype == "string":
-                output.append(value.text)
-            elif element.datatype == "range":
-                output.append(self._get_range(value))
-            elif element.datatype == "cpu":
-                output.append(self._get_cpu(value))
-            elif element.datatype == "sauRegionsConfig":
-                output.append(self._get_sau_regions_config(value))
-            elif element.datatype == "sauRegion":
-                output.append(self._get_sau_region(value))
-            elif element.datatype == "peripherals":
-                output.append(self._get_peripherals(value))
-            elif element.datatype == "peripheral":
-                output.append(self._get_peripheral(value))
-            elif element.datatype == "addressBlock":
-                output.append(self._get_address_block(value))
-            elif element.datatype == "interrupt":
-                output.append(self._get_interrupt(value))
-            elif element.datatype == "enumeratedValues":
-                output.append(self._get_enumerated_values(value))
-            elif element.datatype == "enumeratedValue":
-                output.append(self._get_enumerated_value(value))
-            elif element.datatype == "dimArrayIndex":
-                output.append(self._get_dim_array_index(value))
-            elif element.datatype == "registers":
-                output.append(self._get_registers(value))
-            elif element.datatype == "register":
-                output.append(self._get_register(value))
-            elif element.datatype == "fields":
-                output.append(self._get_fields(value))
-            elif element.datatype == "field":
-                output.append(self._get_field(value))
-            elif element.datatype == "cluster":
-                output.append(self._get_cluster(value))
-            elif element.datatype == "writeConstraint":
-                output.append(self._get_write_constraint(value))
-            else:
+            try:
+                output.append(self._mapping[element.datatype](value))
+            except KeyError:
                 raise NotImplementedError(f"Element type {element.datatype} not implemented")
         if not output:
             return None
@@ -245,6 +176,19 @@ class SvdFields(SvdElement):
     def elements(self) -> List[SvdChildElement]:
         return [
             SvdChildElement("field", "field"),
+        ]
+
+
+class SvdRange(SvdElement):
+    @property
+    def attributes(self) -> List[SvdAttribute]:
+        return []
+
+    @property
+    def elements(self) -> List[SvdChildElement]:
+        return [
+            SvdChildElement("minimum", "int"),
+            SvdChildElement("maximum", "int"),
         ]
 
 
@@ -525,7 +469,7 @@ class SvdDevice(SvdElement):
     @property
     def attributes(self) -> List[SvdAttribute]:
         return [
-            SvdAttribute("schemaVersion", "float"),
+            SvdAttribute("schemaVersion", "string"),
         ]
 
     @property
