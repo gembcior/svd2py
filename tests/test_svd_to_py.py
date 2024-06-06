@@ -1,7 +1,7 @@
-import svd2py
-import yaml
 import pytest
-from rich import print
+import yaml
+
+import svd2py
 
 
 class TestCmsisSvdToPy:
@@ -9,8 +9,7 @@ class TestCmsisSvdToPy:
     def test_parser(self, test_file, svddir, yamldir):
         test_svd = svddir.joinpath(test_file + ".svd")
         test_yaml = yamldir.joinpath(test_file + ".yaml")
-        parser = svd2py.SvdParser(test_svd)
-        result = parser.convert()
+        parser = svd2py.SvdParser()
+        result = parser.convert(test_svd)
         expected = yaml.load(open(test_yaml, "r"), Loader=yaml.FullLoader)
-        print(result)
         assert result == expected
