@@ -78,7 +78,7 @@ class SvdElementParser(SvdTypeParser):
     def __call__(self, element: SvdChildElement) -> Any:
         output = []
         for value in self._root.findall(element.name):
-            if value is None or value.text is None:
+            if value.text is None:
                 continue
             try:
                 output.append(self._mapping[element.datatype](value))
