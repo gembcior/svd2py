@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "svd2py"
 homepage = "https://github.com/gembcior/svd2py"
-version = "0.1.2"
+version = "1.0.0"
 description = "CMSIS SVD file parser that allows to convert SVD format to Python data structure"
 authors = ["Gembcior <gembcior@gmail.com>"]
 license = "MIT"

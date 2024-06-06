@@ -1,1 +1,3 @@
-from .parser import SvdParser
+from __future__ import annotations
+
+from .parser import SvdParser as SvdParser # noqa: W0611
