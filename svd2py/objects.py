@@ -97,16 +97,16 @@ class SvdElement(ABC):
         self._tag = self.__class__.__name__.lower().removeprefix("svd")
         self._root = root
 
-    def _parse_attributes(self):
+    def _parse_attributes(self) -> Dict[str, Any]:
         parser = SvdAttributeParser(self._root.attrib)
         result = {}
         for item in self.attributes:
             parsed = parser(item)
             if parsed is not None:
                 result.update({item.name: parsed})
-        return {"attributes": result}
+        return {"attributes": result} if result else {}
 
-    def _parse_child_elements(self):
+    def _parse_child_elements(self) -> Dict[str, Any]:
         parser = SvdElementParser(self._root)
         result = {}
         for element in self.elements:
@@ -475,7 +475,6 @@ class SvdDevice(SvdElement):
     @property
     def elements(self) -> List[SvdChildElement]:
         return [
-            SvdChildElement("vendor", "string"),
             SvdChildElement("vendorID", "string"),
             SvdChildElement("name", "string"),
             SvdChildElement("series", "string"),

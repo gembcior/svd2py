@@ -34,9 +34,8 @@ mypy = "^0.971"
 pylama = { extras = ["all"], version = "^8.4" }
 
 [tool.poetry.scripts]
-svd2py = "svd2py.app:cli"
-svd2yaml = "svd2py.app:cli"
-svd2json = "svd2py.app:cli"
+svd2yaml = "svd2py.app:svd2yaml"
+svd2json = "svd2py.app:svd2json"
 
 [build-system]
 requires = ["poetry-core"]

@@ -1,12 +1,10 @@
 from __future__ import annotations
 
+import json
 from pathlib import Path
-from typing import Any, Optional, Type
 
 import click
-from rich import print
-from rich.console import Console
-from rich.traceback import install as traceback
+import yaml
 
 from svd2py import SvdParser
 
@@ -14,29 +12,30 @@ from svd2py import SvdParser
 @click.command()
 @click.argument("input", type=click.Path(resolve_path=True, path_type=Path))
 @click.version_option()
-def cli(  # noqa: C901
-    input: Path,  # noqa: W0622
-) -> None:
-    """svd2py - CMSIS SVD to Python converter.
+def svd2json(input: Path) -> None:
+    """svd2json - CMSIS SVD to JSON converter.
 
-    CMSIS SVD file parser that allows to convert SVD format to Python data structure
+    CMSIS SVD file parser that allows to convert SVD format to JSON data structure
 
     \b
     INPUT  - path to SVD file.
     """
-    traceback()
-    console = Console()
-
-    parser = SvdParser(input)
-    result = parser.convert()
-    print(result)
-
-    console.print(f"svd2py done", style="green")
+    parser = SvdParser()
+    result = parser.convert(input)
+    print(json.dumps(result, indent=2))
 
 
-def main() -> None:
-    cli()  # noqa: E1120
+@click.command()
+@click.argument("input", type=click.Path(resolve_path=True, path_type=Path))
+@click.version_option()
+def svd2yaml(input: Path) -> None:
+    """svd2yaml - CMSIS SVD to YAML converter.
 
+    CMSIS SVD file parser that allows to convert SVD format to YAML data structure
 
-if __name__ == "__main__":
-    main()
+    \b
+    INPUT  - path to SVD file.
+    """
+    parser = SvdParser()
+    result = parser.convert(input)
+    print(yaml.dump(result, indent=2))
