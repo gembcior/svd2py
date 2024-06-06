@@ -11,7 +11,7 @@
 ---
 
 ## Introduction
-Parser that allows to convert CMSIS SVD file format to python data structure.
+Parser that allows to convert CMSIS SVD file format to Python data structure.
 Parser does not check SVD file syntax. It assume that parsing file is a proper SVD file.
 
 ## Project structure
@@ -24,90 +24,94 @@ Parser does not check SVD file syntax. It assume that parsing file is a proper S
 ```
 
 ## How it works
-The parser translate SVD elements directly to python data structures like dictionaries and list and resolves elements attributes.
+The parser translate SVD elements directly to Python data structures like dictionaries and list.
 
 :white_check_mark: It does following thing:
  - Translate SVD elements directly to Python data structures (dict and list),
+
+:no_entry_sign: What is missing:
  - Resolves *derivedFrom* element attribute,
  - Parses and resolves *dimElementGroup*,
 
-:no_entry_sign: What is missing:
- - Cluster element not fully supported,
- - Not fully tested, some use cases can be buggy,
-
 Let's assume you have following element in you SVD file:
-
 ```xml
-...
-<register>
-  <dim>2</dim>
-  <dimIncrement>4</dimIncrement>
-  <dimIndex>A,B</dimIndex>
-  <name>Example%s</name>
-  <displayName>Example%s</displayName>
-  <description>Example register</description>
-  <addressOffset>0x0</addressOffset>
-  <size>32</size>
-  <access>read-write</access>
-  <resetValue>0</resetValue>
-  <resetMask>0xFFFFFFFF</resetMask>
-  <dataType>uint32_t *</dataType>
-  <modifiedWriteValues>modify</modifiedWriteValues>
-  <readAction>clear</readAction>
-  <fields>
+<device schemaVersion="1.3" xmlns:xs="http://www.w3.org/2001/XMLSchema-instance" xs:noNamespaceSchemaLocation="CMSIS-SVD.xsd">
+  <name>TestDevic</name>
   ...
-  </fields>
-</register>
-...
+  <peripherals>
+    <peripheral>
+      <name>TestPeripheral</name>
+      ...
+      <registers>
+        <register derivedFrom="TestDerivedRegister">
+          <name>TestRegister</name>
+          ...
+          <fields>
+            <field>
+              <name>TestField0</name>
+              ...
+            </field>
+            <field>
+              <name>TestField1</name>
+              ...
+            </field>
+          </fields>
+        </register>
+        ...
+      </registers>
+    </peripheral>
+        ...
+  </peripherals>
+</device>
 ```
 
 This will be converted to Python like this:
-```
-result = {
+```python
+{
   "device": {
+    "name": "TestDevice",
     ...
-    "peripherals": [{
-        ...
-        "registers": {
-          "register" [{
-            'name': 'ExampleA',
-            'displayName': 'ExampleA',
-            'description': 'Example register',
-            'addressOffset': 0,
-            'size': 32,
-            'access': 'read-write',
-            'resetValue': 0,
-            'resetMask': 4294967295,
-            'dataType': 'uint32_t *',
-            'modifiedWriteValues': 'modify',
-            'readAction': 'clear',
-            'fields': [...]
-            },
-            {
-            'name': 'ExampleB',
-            'displayName': 'ExampleB',
-            'description': 'Example register',
-            'addressOffset': 4,
-            'size': 32,
-            'access': 'read-write',
-            'resetValue': 0,
-            'resetMask': 4294967295,
-            'dataType': 'uint32_t *',
-            'modifiedWriteValues': 'modify',
-            'readAction': 'clear',
-            'fields': [...]
-            },
+    "peripherals": {
+      "peripheral": [
+        {
+          "name": "TestPeripheral",
+          ...
+          "registers": {
+            "register": [
+              {
+                "attributes": {
+                  "derivedFrom": "TestDerivedRegister"
+                },
+                "name": "TestRegister",
+                ...
+                "fields": {
+                  "field": [
+                    {
+                      "name": "TestField0",
+                      ...
+                    },
+                    {
+                      "name": "TestField1",
+                      ...
+                    }
+                  ]
+                }
+              },
+            ]
             ...
-          ]
-        }
-      },
+          }
+        },
+      ]
       ...
-    ]
+    },
+    "attributes": {
+      "schemaVersion": "1.3"
+    }
   }
 }
 ```
 
-## How to install
+## Install
 ``` shell
 pip install svd2py
 ```
@@ -118,15 +122,53 @@ import svd2py
 
 svd_file = "sample.svd"
 # Create SvdParser object passing path to SVD file
-parser = svd2py.SvdParser(svd_file)
+parser = svd2py.SvdParser()
 # Invoke conver() function
-result = parser.convert()
+result = parser.convert(svd_file)
+```
+
+## Extras
+The package also includes two command line tools:
+ - **svd2yaml** - Convert SVD file to YAML format,
+ - **svd2json** - Convert SVD file to JSON format.
+
+### svd2yaml
+``` shell
+Usage: svd2yaml [OPTIONS] INPUT
+
+  svd2yaml - CMSIS SVD to YAML converter.
+
+  CMSIS SVD file parser that allows to convert SVD format to YAML data
+  structure
+
+  INPUT  - path to SVD file.
+
+Options:
+  --version  Show the version and exit.
+  --help     Show this message and exit.
+```
+
+### svd2json
+``` shell
+Usage: svd2json [OPTIONS] INPUT
+
+  svd2json - CMSIS SVD to JSON converter.
+
+  CMSIS SVD file parser that allows to convert SVD format to JSON data
+  structure
+
+  INPUT  - path to SVD file.
+
+Options:
+  --version  Show the version and exit.
+  --help     Show this message and exit.
+
 ```
 
 ## Reference
-class svd2py.**SvdParser**(svd)<br>
-&nbsp;&nbsp;SVD file parser class. This is the main class for parsing SVD files.<br><br>
-&nbsp;&nbsp;*svd* - path to SVD file to parse.<br><br>
-&nbsp;&nbsp;**convert()**<br>
-&nbsp;&nbsp;&nbsp;&nbsp;Convert SVD file and return content in python data structure.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;It does not check SVD file syntax. If it is a proper XML file it will always return something.
+class svd2py.**SvdParser**()<br>
+&nbsp;&nbsp;&nbsp;SVD file parser class. This is the main class for parsing SVD files.<br><br>
+&nbsp;&nbsp;&nbsp;**convert(*svd: Path | str*)**<br>
+&nbsp;&nbsp;&nbsp;&nbsp;*svd* - path to SVD file to parse.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Convert SVD file and return content in Python data structure.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;It does not check SVD file syntax. If it is a proper XML file it will always return something.
