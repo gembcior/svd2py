@@ -10,7 +10,6 @@ classifiers = [
   "License :: OSI Approved :: MIT License",
   "Environment :: Console",
   "Operating System :: POSIX :: Linux",
-  "Programming Language :: Python :: 3.8",
   "Programming Language :: Python :: 3.9",
   "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
@@ -19,7 +18,7 @@ classifiers = [
 packages = [{ include = "svd2py" }]
 
 [tool.poetry.dependencies]
-python = "^3.8"
+python = "^3.9"
 pyyaml = "^6.0"
 click = "^8.1"
 

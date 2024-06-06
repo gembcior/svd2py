@@ -33,7 +33,7 @@ class SvdTypeParser:
 class SvdAttributeParser(SvdTypeParser):
     def __init__(self, root: Dict[str, str]):
         self._root = root
-        self._mapping: Dict[str, Callable] = {
+        self._mapping: Dict[str, Callable[[Any], Any]] = {
             "int": self._get_int,
             "bool": self._get_bool,
             "string": lambda x: x,
@@ -52,7 +52,7 @@ class SvdAttributeParser(SvdTypeParser):
 class SvdElementParser(SvdTypeParser):
     def __init__(self, root: ET.Element):
         self._root = root
-        self._mapping: Dict[str, Callable] = {
+        self._mapping: Dict[str, Callable[[Any], Any]] = {
             "int": lambda x: self._get_int(x.text),
             "bool": lambda x: self._get_bool(x.text),
             "string": lambda x: x.text,
