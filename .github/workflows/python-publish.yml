@@ -1,0 +1,29 @@
+name: Upload Python Package
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  deploy:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+        architecture: x64
+    - name: Install and configure Poetry
+      uses: snok/install-poetry@v1
+      with:
+        virtualenvs-in-project: true
+    - name: Install dependencies
+      run: poetry install --no-interaction
+    - name: Publish package
+      if: github.event_name == 'release'
+      run: |
+        poetry config pypi-token.pypi "${{ secrets.PYPI_API_TOKEN }}"
+        poetry publish --build
