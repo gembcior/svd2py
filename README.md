@@ -1,4 +1,4 @@
-![Logo](https://raw.githubusercontent.com/gembcior/svd2py/main/doc/logo.svg)
+<p align="center"><img src="https://raw.githubusercontent.com/gembcior/svd2py/main/doc/logo.svg" alt="drawing" width="600"/></p>
 
 <h1 align="center">svd2py - Convert CMSIS SVD file to Python data structure</h1>
 
