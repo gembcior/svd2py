@@ -1,6 +1,6 @@
 ![Logo](https://raw.githubusercontent.com/gembcior/svd2py/main/doc/logo.svg)
 
-<h1 align="center">svd2py - Convert CMSIS SVD file Python data structure</h1>
+<h1 align="center">svd2py - Convert CMSIS SVD file to Python data structure</h1>
 
 [![PyPI](https://img.shields.io/pypi/v/svd2py?label=svd2py)](https://pypi.org/project/svd2py/)
 [![PyPI - License](https://img.shields.io/pypi/l/svd2py)](https://pypi.org/project/svd2py/)
