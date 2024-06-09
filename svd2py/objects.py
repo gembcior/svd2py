@@ -87,7 +87,8 @@ class SvdElementParser(SvdTypeParser):
         if not output:
             return None
         if len(output) == 1:
-            return output[0]
+            if not isinstance(output[0], (SvdField, SvdRegister, SvdCluster, SvdPeripheral, SvdAddressBlock, SvdInterrupt, SvdEnumeratedValue)):
+                return output[0]
         return output
 
 
