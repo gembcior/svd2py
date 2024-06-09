@@ -156,7 +156,7 @@ device:
       name: TestPeripheral1_Derived
     - access: read-write
       addressBlock:
-        offset: 0
+      - offset: 0
         size: 1024
         usage: registers
       appendToName: suffix
@@ -168,7 +168,7 @@ device:
       groupName: Test
       headerStructName: TestStructName2
       interrupt:
-        description: Test interrupt 4
+      - description: Test interrupt 4
         name: TEST4
         value: 4
       name: TestPeripheral2_[%s]

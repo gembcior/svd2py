@@ -26,7 +26,7 @@ device:
   name: test
   peripherals:
     peripheral:
-      access: read-write
+    - access: read-write
       addressBlock:
       - offset: 0
         size: 1024
@@ -61,7 +61,7 @@ device:
           displayName: MODE_%s
           fields:
             field:
-              access: read-write
+            - access: read-write
               bitOffset: 10
               bitWidth: 4
               description: Test field enumerated value 0

@@ -103,7 +103,7 @@ device:
       name: TestPeripheral1_Alt
       registers:
         register:
-          access: read-write
+        - access: read-write
           addressOffset: 12
           dataType: uint32_t
           description: In mode A this register acts as a reload value

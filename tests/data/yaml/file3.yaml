@@ -47,7 +47,7 @@ device:
       protection: n
       registers:
         register:
-          access: read-write
+        - access: read-write
           addressOffset: 12
           dataType: uint32_t *
           description: In mode A this register acts as a reload value

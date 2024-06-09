@@ -83,7 +83,7 @@ device:
       name: TestPeripheral1_Derived
     - access: write
       addressBlock:
-        offset: 0
+      - offset: 0
         protection: s
         size: 1024
         usage: registers
@@ -98,7 +98,7 @@ device:
       protection: n
       registers:
         register:
-          addressOffset: 0
+        - addressOffset: 0
           attributes:
             derivedFrom: TestPeripheral1.TEST_MODEA
           description: Test derived from different scope
