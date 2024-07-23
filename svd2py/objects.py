@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from distutils.util import strtobool
 from typing import Any, Callable, Dict, List
 from xml.etree import ElementTree as ET
 
@@ -21,7 +20,13 @@ class SvdChildElement:
 
 class SvdTypeParser:
     def _get_bool(self, value: str) -> bool:
-        return bool(strtobool(value))
+        value = value.lower()
+        if value in ("true", "1"):
+            return True
+        elif value in ("false", "0"):
+            return False
+        else:
+            raise ValueError(f"Invalid boolean value {value}")
 
     def _get_int(self, value: str) -> int:
         if value.lower().startswith("0x"):
