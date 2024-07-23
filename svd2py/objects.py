@@ -26,7 +26,7 @@ class SvdTypeParser:
         elif value in ("false", "0"):
             return False
         else:
-            raise ValueError(f"Invalid boolean value {val}")
+            raise ValueError(f"Invalid boolean value {value}")
 
     def _get_int(self, value: str) -> int:
         if value.lower().startswith("0x"):
