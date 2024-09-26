@@ -5,7 +5,7 @@ import svd2py
 
 
 class TestCmsisSvdToPy:
-    @pytest.mark.parametrize("test_file", ["file1", "file2", "file3", "file4", "file5", "file6", "file7"])
+    @pytest.mark.parametrize("test_file", ["file1", "file2", "file3", "file4", "file5", "file6", "file7", "file8"])
     def test_parser(self, test_file, svddir, yamldir):
         test_svd = svddir.joinpath(test_file + ".svd")
         test_yaml = yamldir.joinpath(test_file + ".yaml")
