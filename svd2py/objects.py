@@ -29,7 +29,8 @@ class SvdTypeParser:
             raise ValueError(f"Invalid boolean value {value}")
 
     def _get_int(self, value: str) -> int:
-        value = value.strip("#")
+        if value.startswith("#"):
+            return int(value.strip("#"), 2)
         if value.lower().startswith("0x"):
             return int(value, 16)
         else:

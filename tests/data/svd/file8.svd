@@ -171,7 +171,7 @@
                 <enumeratedValue>
                   <name>disabled</name>
                   <description>The clock source clk0 is turned off.</description>
-                  <value>#0</value>
+                  <value>#0101</value>
                 </enumeratedValue>
                 <enumeratedValue>
                   <name>enabled</name>
