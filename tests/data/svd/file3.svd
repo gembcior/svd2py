@@ -7,7 +7,7 @@
   <description>Test svd file</description>
   <licenseText>MIT License</licenseText>
   <cpu>
-    <name>TEST_CPU_NAME</name> 
+    <name>TEST_CPU_NAME</name>
     <revision>r1p2</revision>
     <endian>little</endian>
     <mpuPresent>true</mpuPresent>

@@ -1,8 +1,35 @@
+# =================================================================================
+#
+# MIT License
+#
+# Copyright (c) 2026 Gembcior
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+#
+# =================================================================================
+
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
+from collections.abc import Callable
 from dataclasses import dataclass
-from typing import Any, Callable, Dict, List
+from typing import Any
 from xml.etree import ElementTree as ET
 
 
@@ -38,9 +65,9 @@ class SvdTypeParser:
 
 
 class SvdAttributeParser(SvdTypeParser):
-    def __init__(self, root: Dict[str, str]):
+    def __init__(self, root: dict[str, str]):
         self._root = root
-        self._mapping: Dict[str, Callable[[Any], Any]] = {
+        self._mapping: dict[str, Callable[[Any], Any]] = {
             "int": self._get_int,
             "bool": self._get_bool,
             "string": lambda x: x,
@@ -59,7 +86,7 @@ class SvdAttributeParser(SvdTypeParser):
 class SvdElementParser(SvdTypeParser):
     def __init__(self, root: ET.Element):
         self._root = root
-        self._mapping: Dict[str, Callable[[Any], Any]] = {
+        self._mapping: dict[str, Callable[[Any], Any]] = {
             "int": lambda x: self._get_int(x.text),
             "bool": lambda x: self._get_bool(x.text),
             "string": lambda x: x.text,
@@ -105,7 +132,7 @@ class SvdElement(ABC):
         self._tag = self.__class__.__name__.lower().removeprefix("svd")
         self._root = root
 
-    def _parse_attributes(self) -> Dict[str, Any]:
+    def _parse_attributes(self) -> dict[str, Any]:
         parser = SvdAttributeParser(self._root.attrib)
         result = {}
         for item in self.attributes:
@@ -114,7 +141,7 @@ class SvdElement(ABC):
                 result.update({item.name: parsed})
         return {"attributes": result} if result else {}
 
-    def _parse_child_elements(self) -> Dict[str, Any]:
+    def _parse_child_elements(self) -> dict[str, Any]:
         parser = SvdElementParser(self._root)
         result = {}
         for element in self.elements:
@@ -129,31 +156,31 @@ class SvdElement(ABC):
                 result.update({element.name: parsed})
         return result
 
-    def parse(self) -> Dict[str, Any]:
+    def parse(self) -> dict[str, Any]:
         if self._root.tag.lower() != self._tag.lower():
             raise ValueError(f"Root element is not '{self._tag}'")
         return self._parse_child_elements() | self._parse_attributes()
 
     @property
     @abstractmethod
-    def attributes(self) -> List[SvdAttribute]:
+    def attributes(self) -> list[SvdAttribute]:
         pass
 
     @property
     @abstractmethod
-    def elements(self) -> List[SvdChildElement]:
+    def elements(self) -> list[SvdChildElement]:
         pass
 
 
 class SvdField(SvdElement):
     @property
-    def attributes(self) -> List[SvdAttribute]:
+    def attributes(self) -> list[SvdAttribute]:
         return [
             SvdAttribute("derivedFrom", "string"),
         ]
 
     @property
-    def elements(self) -> List[SvdChildElement]:
+    def elements(self) -> list[SvdChildElement]:
         return [
             SvdChildElement("dim", "int"),
             SvdChildElement("dimIncrement", "int"),
@@ -177,11 +204,11 @@ class SvdField(SvdElement):
 
 class SvdFields(SvdElement):
     @property
-    def attributes(self) -> List[SvdAttribute]:
+    def attributes(self) -> list[SvdAttribute]:
         return []
 
     @property
-    def elements(self) -> List[SvdChildElement]:
+    def elements(self) -> list[SvdChildElement]:
         return [
             SvdChildElement("field", "field"),
         ]
@@ -189,11 +216,11 @@ class SvdFields(SvdElement):
 
 class SvdRange(SvdElement):
     @property
-    def attributes(self) -> List[SvdAttribute]:
+    def attributes(self) -> list[SvdAttribute]:
         return []
 
     @property
-    def elements(self) -> List[SvdChildElement]:
+    def elements(self) -> list[SvdChildElement]:
         return [
             SvdChildElement("minimum", "int"),
             SvdChildElement("maximum", "int"),
@@ -202,11 +229,11 @@ class SvdRange(SvdElement):
 
 class SvdWriteConstraint(SvdElement):
     @property
-    def attributes(self) -> List[SvdAttribute]:
+    def attributes(self) -> list[SvdAttribute]:
         return []
 
     @property
-    def elements(self) -> List[SvdChildElement]:
+    def elements(self) -> list[SvdChildElement]:
         return [
             SvdChildElement("writeAsRead", "bool"),
             SvdChildElement("useEnumeratedValues", "bool"),
@@ -216,13 +243,13 @@ class SvdWriteConstraint(SvdElement):
 
 class SvdRegister(SvdElement):
     @property
-    def attributes(self) -> List[SvdAttribute]:
+    def attributes(self) -> list[SvdAttribute]:
         return [
             SvdAttribute("derivedFrom", "string"),
         ]
 
     @property
-    def elements(self) -> List[SvdChildElement]:
+    def elements(self) -> list[SvdChildElement]:
         return [
             SvdChildElement("dim", "int"),
             SvdChildElement("dimIncrement", "int"),
@@ -250,13 +277,13 @@ class SvdRegister(SvdElement):
 
 class SvdCluster(SvdElement):
     @property
-    def attributes(self) -> List[SvdAttribute]:
+    def attributes(self) -> list[SvdAttribute]:
         return [
             SvdAttribute("derivedFrom", "string"),
         ]
 
     @property
-    def elements(self) -> List[SvdChildElement]:
+    def elements(self) -> list[SvdChildElement]:
         return [
             SvdChildElement("dim", "int"),
             SvdChildElement("dimIncrement", "int"),
@@ -280,11 +307,11 @@ class SvdCluster(SvdElement):
 
 class SvdRegisters(SvdElement):
     @property
-    def attributes(self) -> List[SvdAttribute]:
+    def attributes(self) -> list[SvdAttribute]:
         return []
 
     @property
-    def elements(self) -> List[SvdChildElement]:
+    def elements(self) -> list[SvdChildElement]:
         return [
             SvdChildElement("register", "register"),
             SvdChildElement("cluster", "cluster"),
@@ -293,11 +320,11 @@ class SvdRegisters(SvdElement):
 
 class SvdEnumeratedValue(SvdElement):
     @property
-    def attributes(self) -> List[SvdAttribute]:
+    def attributes(self) -> list[SvdAttribute]:
         return []
 
     @property
-    def elements(self) -> List[SvdChildElement]:
+    def elements(self) -> list[SvdChildElement]:
         return [
             SvdChildElement("name", "string"),
             SvdChildElement("description", "string"),
@@ -308,13 +335,13 @@ class SvdEnumeratedValue(SvdElement):
 
 class SvdEnumeratedValues(SvdElement):
     @property
-    def attributes(self) -> List[SvdAttribute]:
+    def attributes(self) -> list[SvdAttribute]:
         return [
             SvdAttribute("derivedFrom", "string"),
         ]
 
     @property
-    def elements(self) -> List[SvdChildElement]:
+    def elements(self) -> list[SvdChildElement]:
         return [
             SvdChildElement("name", "string"),
             SvdChildElement("headerEnumName", "string"),
@@ -325,11 +352,11 @@ class SvdEnumeratedValues(SvdElement):
 
 class SvdDimArrayIndex(SvdElement):
     @property
-    def attributes(self) -> List[SvdAttribute]:
+    def attributes(self) -> list[SvdAttribute]:
         return []
 
     @property
-    def elements(self) -> List[SvdChildElement]:
+    def elements(self) -> list[SvdChildElement]:
         return [
             SvdChildElement("headerEnumName", "string"),
             SvdChildElement("enumeratedValue", "enumeratedValue"),
@@ -338,11 +365,11 @@ class SvdDimArrayIndex(SvdElement):
 
 class SvdAddressBlock(SvdElement):
     @property
-    def attributes(self) -> List[SvdAttribute]:
+    def attributes(self) -> list[SvdAttribute]:
         return []
 
     @property
-    def elements(self) -> List[SvdChildElement]:
+    def elements(self) -> list[SvdChildElement]:
         return [
             SvdChildElement("offset", "int"),
             SvdChildElement("size", "int"),
@@ -353,11 +380,11 @@ class SvdAddressBlock(SvdElement):
 
 class SvdInterrupt(SvdElement):
     @property
-    def attributes(self) -> List[SvdAttribute]:
+    def attributes(self) -> list[SvdAttribute]:
         return []
 
     @property
-    def elements(self) -> List[SvdChildElement]:
+    def elements(self) -> list[SvdChildElement]:
         return [
             SvdChildElement("name", "string"),
             SvdChildElement("description", "string"),
@@ -367,13 +394,13 @@ class SvdInterrupt(SvdElement):
 
 class SvdPeripheral(SvdElement):
     @property
-    def attributes(self) -> List[SvdAttribute]:
+    def attributes(self) -> list[SvdAttribute]:
         return [
             SvdAttribute("derivedFrom", "string"),
         ]
 
     @property
-    def elements(self) -> List[SvdChildElement]:
+    def elements(self) -> list[SvdChildElement]:
         return [
             SvdChildElement("dim", "int"),
             SvdChildElement("dimIncrement", "int"),
@@ -403,11 +430,11 @@ class SvdPeripheral(SvdElement):
 
 class SvdPeripherals(SvdElement):
     @property
-    def attributes(self) -> List[SvdAttribute]:
+    def attributes(self) -> list[SvdAttribute]:
         return []
 
     @property
-    def elements(self) -> List[SvdChildElement]:
+    def elements(self) -> list[SvdChildElement]:
         return [
             SvdChildElement("peripheral", "peripheral"),
         ]
@@ -415,14 +442,14 @@ class SvdPeripherals(SvdElement):
 
 class SvdSauRegion(SvdElement):
     @property
-    def attributes(self) -> List[SvdAttribute]:
+    def attributes(self) -> list[SvdAttribute]:
         return [
             SvdAttribute("enabled", "bool"),
             SvdAttribute("protectionWhenDisabled", "string"),
         ]
 
     @property
-    def elements(self) -> List[SvdChildElement]:
+    def elements(self) -> list[SvdChildElement]:
         return [
             SvdChildElement("base", "int"),
             SvdChildElement("limit", "int"),
@@ -432,14 +459,14 @@ class SvdSauRegion(SvdElement):
 
 class SvdSauRegionsConfig(SvdElement):
     @property
-    def attributes(self) -> List[SvdAttribute]:
+    def attributes(self) -> list[SvdAttribute]:
         return [
             SvdAttribute("enabled", "bool"),
             SvdAttribute("protectionWhenDisabled", "string"),
         ]
 
     @property
-    def elements(self) -> List[SvdChildElement]:
+    def elements(self) -> list[SvdChildElement]:
         return [
             SvdChildElement("region", "sauRegion"),
         ]
@@ -447,11 +474,11 @@ class SvdSauRegionsConfig(SvdElement):
 
 class SvdCpu(SvdElement):
     @property
-    def attributes(self) -> List[SvdAttribute]:
+    def attributes(self) -> list[SvdAttribute]:
         return []
 
     @property
-    def elements(self) -> List[SvdChildElement]:
+    def elements(self) -> list[SvdChildElement]:
         return [
             SvdChildElement("name", "string"),
             SvdChildElement("revision", "string"),
@@ -475,13 +502,13 @@ class SvdCpu(SvdElement):
 
 class SvdDevice(SvdElement):
     @property
-    def attributes(self) -> List[SvdAttribute]:
+    def attributes(self) -> list[SvdAttribute]:
         return [
             SvdAttribute("schemaVersion", "string"),
         ]
 
     @property
-    def elements(self) -> List[SvdChildElement]:
+    def elements(self) -> list[SvdChildElement]:
         return [
             SvdChildElement("vendorID", "string"),
             SvdChildElement("name", "string"),
