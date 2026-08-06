@@ -30,21 +30,21 @@ import pytest
 
 
 @pytest.fixture
-def rootdir():
+def rootdir() -> Path:
     path = Path(__file__)
     return path.parent
 
 
 @pytest.fixture
-def datadir(rootdir):
+def datadir(rootdir: Path) -> Path:
     return rootdir.joinpath("data")
 
 
 @pytest.fixture
-def svddir(datadir):
+def svddir(datadir: Path) -> Path:
     return datadir.joinpath("svd")
 
 
 @pytest.fixture
-def yamldir(datadir):
+def yamldir(datadir: Path) -> Path:
     return datadir.joinpath("yaml")

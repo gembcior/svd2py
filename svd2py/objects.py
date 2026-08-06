@@ -65,7 +65,7 @@ class SvdTypeParser:
 
 
 class SvdAttributeParser(SvdTypeParser):
-    def __init__(self, root: dict[str, str]):
+    def __init__(self, root: dict[str, str]) -> None:
         self._root = root
         self._mapping: dict[str, Callable[[Any], Any]] = {
             "int": self._get_int,
@@ -73,18 +73,18 @@ class SvdAttributeParser(SvdTypeParser):
             "string": lambda x: x,
         }
 
-    def __call__(self, attribute: SvdAttribute) -> Any:
+    def __call__(self, attribute: SvdAttribute) -> bool | int | str | None:
         value = self._root.get(attribute.name)
         if value is None:
             return None
         try:
             return self._mapping[attribute.datatype](value)
-        except KeyError:
-            raise NotImplementedError(f"Attribute type {attribute.datatype} not implemented")
+        except KeyError as err:
+            raise NotImplementedError(f"Attribute type {attribute.datatype} not implemented") from err
 
 
 class SvdElementParser(SvdTypeParser):
-    def __init__(self, root: ET.Element):
+    def __init__(self, root: ET.Element) -> None:
         self._root = root
         self._mapping: dict[str, Callable[[Any], Any]] = {
             "int": lambda x: self._get_int(x.text),
@@ -109,25 +109,26 @@ class SvdElementParser(SvdTypeParser):
             "cluster": SvdCluster,
         }
 
-    def __call__(self, element: SvdChildElement) -> Any:
+    def __call__(self, element: SvdChildElement) -> object:
         output = []
         for value in self._root.findall(element.name):
             if value.text is None:
                 continue
             try:
                 output.append(self._mapping[element.datatype](value))
-            except KeyError:
-                raise NotImplementedError(f"Element type {element.datatype} not implemented")
+            except KeyError as err:
+                raise NotImplementedError(f"Element type {element.datatype} not implemented") from err
         if not output:
             return None
-        if len(output) == 1:
-            if not isinstance(output[0], (SvdField, SvdRegister, SvdCluster, SvdPeripheral, SvdAddressBlock, SvdInterrupt, SvdEnumeratedValue)):
-                return output[0]
+        if len(output) == 1 and not isinstance(
+            output[0], (SvdField, SvdRegister, SvdCluster, SvdPeripheral, SvdAddressBlock, SvdInterrupt, SvdEnumeratedValue)
+        ):
+            return output[0]
         return output
 
 
 class SvdElement(ABC):
-    def __init__(self, root: ET.Element):
+    def __init__(self, root: ET.Element) -> None:
         super().__init__()
         self._tag = self.__class__.__name__.lower().removeprefix("svd")
         self._root = root

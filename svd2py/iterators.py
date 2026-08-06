@@ -30,15 +30,15 @@ from typing import Any
 
 
 class PeripheralIterator:
-    def __init__(self, data: dict[str, Any]):
+    def __init__(self, data: dict[str, Any]) -> None:
         self._peripherals = data["device"]["peripherals"]["peripheral"]
         self._index = 0
 
-    def __iter__(self):
+    def __iter__(self) -> PeripheralIterator:
         self._index = 0
         return self
 
-    def __next__(self):
+    def __next__(self) -> dict[str, Any]:
         if self._index >= len(self._peripherals):
             raise StopIteration
         result = self._peripherals[self._index]
@@ -47,16 +47,16 @@ class PeripheralIterator:
 
 
 class RegisterIterator:
-    def __init__(self, data: dict[str, Any]):
+    def __init__(self, data: dict[str, Any]) -> None:
         self._peripherals = iter(PeripheralIterator(data))
         self._index = 0
 
-    def __iter__(self):
+    def __iter__(self) -> RegisterIterator:
         self._index = 0
         self._peripheral = next(self._peripherals)
         return self
 
-    def _get_next_register(self):
+    def _get_next_register(self) -> dict[str, Any]:
         try:
             result = self._peripheral["registers"]["register"][self._index]
         except KeyError:
@@ -65,7 +65,7 @@ class RegisterIterator:
             result = self._get_next_register()
         return result
 
-    def _reset(self):
+    def _reset(self) -> bool:
         try:
             if self._index >= len(self._peripheral["registers"]["register"]):
                 return True
@@ -73,7 +73,7 @@ class RegisterIterator:
             return True
         return False
 
-    def __next__(self):
+    def __next__(self) -> dict[str, Any]:
         if self._reset():
             self._peripheral = next(self._peripherals)
             self._index = 0
@@ -83,16 +83,16 @@ class RegisterIterator:
 
 
 class ClusterIterator:
-    def __init__(self, data: dict[str, Any]):
+    def __init__(self, data: dict[str, Any]) -> None:
         self._peripherals = iter(PeripheralIterator(data))
         self._index = 0
 
-    def __iter__(self):
+    def __iter__(self) -> ClusterIterator:
         self._index = 0
         self._peripheral = next(self._peripherals)
         return self
 
-    def _get_next_cluster(self):
+    def _get_next_cluster(self) -> dict[str, Any]:
         try:
             result = self._peripheral["registers"]["cluster"][self._index]
         except KeyError:
@@ -101,7 +101,7 @@ class ClusterIterator:
             result = self._get_next_cluster()
         return result
 
-    def _reset(self):
+    def _reset(self) -> bool:
         try:
             if self._index >= len(self._peripheral["registers"]["cluster"]):
                 return True
@@ -109,7 +109,7 @@ class ClusterIterator:
             return True
         return False
 
-    def __next__(self):
+    def __next__(self) -> dict[str, Any]:
         if self._reset():
             self._peripheral = next(self._peripherals)
             self._index = 0
@@ -119,16 +119,16 @@ class ClusterIterator:
 
 
 class FieldIterator:
-    def __init__(self, data: dict[str, Any]):
+    def __init__(self, data: dict[str, Any]) -> None:
         self._registers = iter(RegisterIterator(data))
         self._index = 0
 
-    def __iter__(self):
+    def __iter__(self) -> FieldIterator:
         self._index = 0
         self._register = next(self._registers)
         return self
 
-    def _get_next_field(self):
+    def _get_next_field(self) -> dict[str, Any]:
         try:
             result = self._register["fields"]["field"][self._index]
         except KeyError:
@@ -137,7 +137,7 @@ class FieldIterator:
             result = self._get_next_field()
         return result
 
-    def _reset(self):
+    def _reset(self) -> bool:
         try:
             if self._index >= len(self._register["fields"]["field"]):
                 return True
@@ -145,7 +145,7 @@ class FieldIterator:
             return True
         return False
 
-    def __next__(self):
+    def __next__(self) -> dict[str, Any]:
         if self._reset():
             self._register = next(self._registers)
             self._index = 0
