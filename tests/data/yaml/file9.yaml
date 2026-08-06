@@ -1,0 +1,94 @@
+device:
+  access: read-write
+  addressUnitBits: 8
+  attributes:
+    schemaVersion: '1.3'
+  cpu:
+    dcachePresent: false
+    deviceNumInterrupts: 5
+    dspPresent: false
+    dtcmPresent: false
+    endian: little
+    fpuDP: false
+    fpuPresent: false
+    icachePresent: false
+    itcmPresent: false
+    mpuPresent: true
+    name: CM33
+    nvicPrioBits: 3
+    revision: r0p0
+    sauNumRegions: '2'
+    sauRegionsConfig:
+      attributes:
+        enabled: true
+        protectionWhenDisabled: s
+      region:
+      - access: n
+        attributes:
+          enabled: true
+          protectionWhenDisabled: s
+        base: 268435456
+        limit: 268468223
+      - access: c
+        attributes:
+          enabled: false
+        base: 268500992
+        limit: 268533759
+    vendorSystickConfig: false
+    vtorPresent: true
+  description: Test svd file with cluster, dimArrayIndex and sauRegionsConfig
+  headerDefinitionsPrefix: TEST_
+  headerSystemFilename: system_TEST
+  licenseText: MIT License
+  name: file9
+  peripherals:
+    peripheral:
+    - access: read-write
+      baseAddress: 1073754112
+      description: Test peripheral with a register cluster
+      name: TestClusterPeripheral
+      protection: n
+      registers:
+        cluster:
+        - addressOffset: 0
+          description: Channel 0 register set
+          name: CH0
+          register:
+          - access: read-write
+            addressOffset: 0
+            description: Channel control register
+            fields:
+              field:
+              - access: read-write
+                bitOffset: 0
+                bitWidth: 1
+                description: Source select, indexed field
+                dim: 2
+                dimArrayIndex:
+                  enumeratedValue:
+                  - description: Source channel 0
+                    name: SRC0
+                    value: 0
+                  - description: Source channel 1
+                    name: SRC1
+                    value: 1
+                  headerEnumName: SRC_SELECT
+                dimIncrement: 1
+                name: SRC
+            name: CTRL
+            protection: n
+            resetMask: 4294967295
+            resetValue: 0
+            size: 32
+      resetMask: 4294967295
+      resetValue: 0
+      size: 32
+      version: '1.0'
+  protection: n
+  resetMask: 4294967295
+  resetValue: 0
+  series: TestSeries
+  size: 32
+  vendorID: Test
+  version: '1.1'
+  width: 32

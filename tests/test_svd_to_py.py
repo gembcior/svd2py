@@ -33,7 +33,7 @@ import svd2py
 
 
 class TestCmsisSvdToPy:
-    @pytest.mark.parametrize("test_file", ["file1", "file2", "file3", "file4", "file5", "file6", "file7", "file8"])
+    @pytest.mark.parametrize("test_file", ["file1", "file2", "file3", "file4", "file5", "file6", "file7", "file8", "file9"])
     def test_parser(self, test_file: str, svddir: Path, yamldir: Path) -> None:
         test_svd = svddir.joinpath(test_file + ".svd")
         test_yaml = yamldir.joinpath(test_file + ".yaml")
@@ -42,3 +42,28 @@ class TestCmsisSvdToPy:
         with test_yaml.open() as f:
             expected = yaml.load(f, Loader=yaml.FullLoader)
         assert result == expected
+
+    def test_parser_accepts_str_path(self, svddir: Path) -> None:
+        parser = svd2py.SvdParser()
+        result = parser.convert(str(svddir.joinpath("file1.svd")))
+        assert result["device"]["name"] == "file1"
+
+    def test_parser_rejects_wrong_root_tag(self, tmp_path: Path) -> None:
+        bad_svd = tmp_path.joinpath("bad.svd")
+        bad_svd.write_text("<notadevice></notadevice>")
+        parser = svd2py.SvdParser()
+        with pytest.raises(ValueError, match="Root element is not 'device'"):
+            parser.convert(bad_svd)
+
+    def test_parser_rejects_invalid_boolean(self, tmp_path: Path) -> None:
+        bad_svd = tmp_path.joinpath("bad.svd")
+        bad_svd.write_text("""
+            <device schemaVersion="1.3">
+              <cpu>
+                <mpuPresent>maybe</mpuPresent>
+              </cpu>
+            </device>
+        """)
+        parser = svd2py.SvdParser()
+        with pytest.raises(ValueError, match="Invalid boolean value"):
+            parser.convert(bad_svd)

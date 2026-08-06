@@ -86,6 +86,9 @@ select = [
     "N",
 ]
 
+[tool.coverage.run]
+omit = ["*/__init__.py"]
+
 [tool.coverage.report]
 exclude_lines = [
     "pragma: no cover",

@@ -442,6 +442,10 @@ class SvdPeripherals(SvdElement):
 
 
 class SvdSauRegion(SvdElement):
+    def __init__(self, root: ET.Element) -> None:
+        super().__init__(root)
+        self._tag = "region"  # ponytail: XML tag is <region>, class name doesn't match convention
+
     @property
     def attributes(self) -> list[SvdAttribute]:
         return [
