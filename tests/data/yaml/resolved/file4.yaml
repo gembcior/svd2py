@@ -1,0 +1,205 @@
+device:
+  access: read-write
+  addressUnitBits: 8
+  attributes:
+    schemaVersion: '1.3'
+  cpu:
+    dcachePresent: true
+    deviceNumInterrupts: 9
+    dspPresent: false
+    dtcmPresent: false
+    endian: little
+    fpuDP: true
+    fpuPresent: true
+    icachePresent: true
+    itcmPresent: false
+    mpuPresent: true
+    name: TEST_CPU_NAME
+    nvicPrioBits: 4
+    revision: r1p2
+    vendorSystickConfig: false
+    vtorPresent: false
+  description: Test svd file
+  headerDefinitionsPrefix: TEST_
+  headerSystemFilename: system_TEST
+  licenseText: MIT License
+  name: TEST_NAME
+  peripherals:
+    peripheral:
+    - access: read-write
+      addressBlock:
+      - offset: 0
+        protection: s
+        size: 1024
+        usage: registers
+      - offset: 1024
+        protection: s
+        size: 1024
+        usage: reserved
+      appendToName: suffix
+      baseAddress: 1073750016
+      description: Test peripheral number 1
+      disableCondition: True == True
+      groupName: Test
+      headerStructName: TestStructName
+      name: TestPeripheral1
+      prependToName: prefix
+      protection: n
+      registers:
+        register:
+        - access: read-write
+          addressOffset: 12
+          dataType: uint32_t *
+          description: In mode A this register acts as a reload value
+          displayName: MODEA
+          modifiedWriteValues: modify
+          name: TEST_MODEA
+          protection: n
+          readAction: clear
+          resetMask: 4294967295
+          resetValue: 0
+          size: 32
+          writeConstraint:
+            writeAsRead: true
+        - access: read-write
+          addressOffset: 16
+          dataType: uint32_t *
+          description: Derived register test
+          displayName: MODEA_derived
+          modifiedWriteValues: modify
+          name: TEST_MODEA_derived
+          protection: n
+          readAction: clear
+          resetMask: 4294967295
+          resetValue: 0
+          size: 32
+          writeConstraint:
+            writeAsRead: true
+        - access: read-write
+          addressOffset: 20
+          dataType: uint32_t *
+          description: Derived register test 2
+          displayName: MODEA_derived_2
+          modifiedWriteValues: modify
+          name: TEST_MODEA_derived_2
+          protection: n
+          readAction: clear
+          resetMask: 4294967295
+          resetValue: 0
+          size: 32
+          writeConstraint:
+            writeAsRead: true
+      resetMask: 4294967295
+      resetValue: 0
+      size: 32
+      version: '1.0'
+    - access: read-write
+      addressBlock:
+      - offset: 0
+        protection: s
+        size: 1024
+        usage: registers
+      - offset: 1024
+        protection: s
+        size: 1024
+        usage: reserved
+      appendToName: suffix
+      baseAddress: 1073758208
+      description: Test peripheral number 1
+      disableCondition: True == True
+      groupName: Test
+      headerStructName: TestStructName
+      name: TestPeripheral1_Derived
+      prependToName: prefix
+      protection: n
+      registers:
+        register:
+        - access: read-write
+          addressOffset: 12
+          dataType: uint32_t *
+          description: In mode A this register acts as a reload value
+          displayName: MODEA
+          modifiedWriteValues: modify
+          name: TEST_MODEA
+          protection: n
+          readAction: clear
+          resetMask: 4294967295
+          resetValue: 0
+          size: 32
+          writeConstraint:
+            writeAsRead: true
+        - access: read-write
+          addressOffset: 16
+          dataType: uint32_t *
+          description: Derived register test
+          displayName: MODEA_derived
+          modifiedWriteValues: modify
+          name: TEST_MODEA_derived
+          protection: n
+          readAction: clear
+          resetMask: 4294967295
+          resetValue: 0
+          size: 32
+          writeConstraint:
+            writeAsRead: true
+        - access: read-write
+          addressOffset: 20
+          dataType: uint32_t *
+          description: Derived register test 2
+          displayName: MODEA_derived_2
+          modifiedWriteValues: modify
+          name: TEST_MODEA_derived_2
+          protection: n
+          readAction: clear
+          resetMask: 4294967295
+          resetValue: 0
+          size: 32
+          writeConstraint:
+            writeAsRead: true
+      resetMask: 4294967295
+      resetValue: 0
+      size: 32
+      version: '1.0'
+    - access: write
+      addressBlock:
+      - offset: 0
+        protection: s
+        size: 1024
+        usage: registers
+      appendToName: suffix
+      baseAddress: 1342185472
+      description: Test peripheral number 2
+      disableCondition: True == True
+      groupName: Test
+      headerStructName: TestStructName
+      name: TestPeripheral2
+      prependToName: prefix
+      protection: n
+      registers:
+        register:
+        - access: read-write
+          addressOffset: 0
+          dataType: uint32_t *
+          description: Test derived from different scope
+          displayName: MODEA
+          modifiedWriteValues: modify
+          name: TEST_DERIVERED
+          protection: n
+          readAction: clear
+          resetMask: 4294967295
+          resetValue: 0
+          size: 32
+          writeConstraint:
+            writeAsRead: true
+      resetMask: 4294967295
+      resetValue: 0
+      size: 32
+      version: '1.0'
+  protection: n
+  resetMask: 4294967295
+  resetValue: 0
+  series: TEST_SERIES
+  size: 32
+  vendorID: TEST_ID
+  version: '1.1'
+  width: 32
