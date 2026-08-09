@@ -33,7 +33,7 @@ import svd2py
 
 
 class TestCmsisSvdToPy:
-    @pytest.mark.parametrize("test_file", ["file1", "file2", "file3", "file4", "file5", "file6", "file7", "file8", "file9"])
+    @pytest.mark.parametrize("test_file", ["file1", "file2", "file3", "file4", "file5", "file6", "file7", "file8", "file9", "file10"])
     def test_parser_with_derived_from_disabled(self, test_file: str, svddir: Path, yamldir: Path) -> None:
         # These fixtures capture the raw/unresolved output, i.e. the behavior before
         # derivedFrom resolution was added. Files without any derivedFrom attribute
@@ -58,7 +58,7 @@ class TestCmsisSvdToPy:
             expected = yaml.load(f, Loader=yaml.FullLoader)
         assert result == expected
 
-    @pytest.mark.parametrize("test_file", ["file3", "file4", "file5", "file6"])
+    @pytest.mark.parametrize("test_file", ["file3", "file4", "file5", "file6", "file10"])
     def test_parser_resolves_derived_from_by_default(self, test_file: str, svddir: Path, yamldir: Path) -> None:
         test_svd = svddir.joinpath(test_file + ".svd")
         test_yaml = yamldir.joinpath("resolved").joinpath(test_file + ".yaml")

@@ -1,0 +1,99 @@
+device:
+  access: read-write
+  addressUnitBits: 8
+  attributes:
+    schemaVersion: '1.3'
+  description: Test svd file for enumeratedValues derivedFrom
+  licenseText: MIT License
+  name: file10
+  peripherals:
+    peripheral:
+    - baseAddress: 1073741824
+      name: TestPeripheral
+      registers:
+        register:
+        - access: read-write
+          addressOffset: 0
+          description: Register with the origin enumeratedValues sections
+          fields:
+            field:
+            - bitOffset: 0
+              bitWidth: 2
+              description: Origin field with a device-wide unique enumeratedValues
+                name
+              enumeratedValues:
+                enumeratedValue:
+                - description: Disable device
+                  name: disabled
+                  value: 0
+                - description: Enable device
+                  name: enabled
+                  value: 1
+                name: UniqueEnum
+                usage: read-write
+              name: FieldA
+            - bitOffset: 4
+              bitWidth: 2
+              description: Derives its enumeratedValues by a bare, unqualified name
+              enumeratedValues:
+                attributes:
+                  derivedFrom: UniqueEnum
+                name: UniqueEnumCopy
+              name: FieldB
+          name: RegA
+          resetValue: 0
+          size: 32
+        - access: read-write
+          addressOffset: 4
+          description: Register whose fields reuse an enumeratedValues name that is
+            not unique device-wide
+          fields:
+            field:
+            - bitOffset: 0
+              bitWidth: 2
+              description: One of two fields sharing the same enumeratedValues name
+              enumeratedValues:
+                enumeratedValue:
+                - description: Off state
+                  name: 'off'
+                  value: 0
+                - description: On state
+                  name: 'on'
+                  value: 1
+                name: DupEnum
+                usage: read-write
+              name: FieldC
+            - bitOffset: 4
+              bitWidth: 2
+              description: The other field sharing the same enumeratedValues name,
+                to force disambiguation
+              enumeratedValues:
+                enumeratedValue:
+                - description: Low state
+                  name: low
+                  value: 0
+                - description: High state
+                  name: high
+                  value: 1
+                name: DupEnum
+                usage: read-write
+              name: FieldF
+            - bitOffset: 8
+              bitWidth: 2
+              description: Derives its enumeratedValues qualified by the origin field
+                name
+              enumeratedValues:
+                attributes:
+                  derivedFrom: FieldC.DupEnum
+                name: DupEnumFromFieldC
+              name: FieldD
+          name: RegB
+          resetValue: 0
+          size: 32
+  resetMask: 4294967295
+  resetValue: 0
+  series: TestSeries
+  size: 32
+  vendorID: Test
+  version: '1.0'
+  width: 32

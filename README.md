@@ -31,10 +31,15 @@ The parser translate SVD elements directly to Python data structures like dictio
  - Resolves the *derivedFrom* attribute on `peripheral`, `cluster`, `register` and `field` elements, including
    cross-scope references (e.g. `derivedFrom="otherPeripheral.otherRegister"`). This is enabled by default and
    can be disabled, see [Reference](#reference).
+ - Resolves the *derivedFrom* attribute on `enumeratedValues`. Unlike the elements above, it is referenced by its
+   own `<name>`, searched throughout the whole device, optionally qualified with a trailing `field`,
+   `register.field` or `peripheral.register.field` prefix only as needed to disambiguate (e.g.
+   `derivedFrom="clk.dis_en_enum"`, `derivedFrom="ctrl.clk.dis_en_enum"` or
+   `derivedFrom="timer0.ctrl.clk.dis_en_enum"`). An ambiguous reference (matching more than one `enumeratedValues`)
+   raises an error asking for more qualification.
 
 :no_entry_sign: What is missing:
  - Parses and resolves *dimElementGroup*,
- - Resolves *derivedFrom* on *enumeratedValues* (its path format differs from the other elements),
 
 Let's assume you have following element in you SVD file:
 ```xml
@@ -179,9 +184,10 @@ class svd2py.**SvdParser**()<br>
 &nbsp;&nbsp;&nbsp;**convert(*svd: Path | str*, *resolve_derived_from: bool = True*)**<br>
 &nbsp;&nbsp;&nbsp;&nbsp;*svd* - path to SVD file to parse.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;*resolve_derived_from* - if `True` (default), every `derivedFrom` attribute on a
-`peripheral`, `cluster`, `register` or `field` element is resolved: the element is merged with the element it is
-derived from (same-scope name, or a cross-scope path such as `"otherPeripheral.otherRegister"`), and the
-`attributes.derivedFrom` marker is removed from the result. Set to `False` to get the raw, unresolved output
-(the `attributes.derivedFrom` entry is kept as-is, matching the pre-resolution behavior).<br>
+`peripheral`, `cluster`, `register`, `field` or `enumeratedValues` element is resolved: the element is merged with
+the element it is derived from (same-scope name, or a cross-scope path such as `"otherPeripheral.otherRegister"`;
+`enumeratedValues` uses its own name-based, whole-device lookup, see above), and the `attributes.derivedFrom`
+marker is removed from the result. Set to `False` to get the raw, unresolved output (the `attributes.derivedFrom`
+entry is kept as-is, matching the pre-resolution behavior).<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Convert SVD file and return content in Python data structure.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;It does not check SVD file syntax. If it is a proper XML file it will always return something.

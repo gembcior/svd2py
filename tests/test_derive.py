@@ -63,6 +63,102 @@ def _write(tmp_path: Path, content: str) -> Path:
     return svd
 
 
+def _field_with_enum(field_name: str, enum_name: str, marker: str, bit_offset: int = 0) -> str:
+    return f"""
+    <field>
+      <name>{field_name}</name>
+      <bitOffset>{bit_offset}</bitOffset>
+      <bitWidth>2</bitWidth>
+      <enumeratedValues>
+        <name>{enum_name}</name>
+        <enumeratedValue>
+          <name>{marker}</name>
+          <value>1</value>
+        </enumeratedValue>
+      </enumeratedValues>
+    </field>
+    """
+
+
+def _field_with_derived_enum(field_name: str, derived_from: str, bit_offset: int = 0) -> str:
+    return f"""
+    <field>
+      <name>{field_name}</name>
+      <bitOffset>{bit_offset}</bitOffset>
+      <bitWidth>2</bitWidth>
+      <enumeratedValues derivedFrom="{derived_from}">
+        <name>{field_name}Enum</name>
+      </enumeratedValues>
+    </field>
+    """
+
+
+def _enum_ambiguity_device_with_consumer(derived_from: str) -> str:
+    # Layout used to exercise every qualification depth of enumeratedValues.derivedFrom:
+    #   - "Dup" is defined 3 times (PeriphA.RegA.FieldOne, PeriphA.RegB.FieldOne,
+    #     PeriphB.RegA.FieldOne) so a bare or field-only qualified reference is
+    #     ambiguous, register+field qualification is only unambiguous for RegB
+    #     (unique to PeriphA), and full peripheral+register+field qualification
+    #     always disambiguates.
+    #   - "Dup2" is defined twice under differently-named fields, so a bare
+    #     reference is ambiguous but field-only qualification disambiguates.
+    return _device_with_peripherals(f"""
+        <peripheral>
+          <name>PeriphA</name>
+          <baseAddress>0x40000000</baseAddress>
+          <registers>
+            <register>
+              <name>RegA</name>
+              <addressOffset>0x0</addressOffset>
+              <fields>
+                {_field_with_enum("FieldOne", "Dup", "A_RegA_FieldOne")}
+                {_field_with_enum("UniqueFieldA", "Dup2", "UniqueA", bit_offset=4)}
+              </fields>
+            </register>
+            <register>
+              <name>RegB</name>
+              <addressOffset>0x4</addressOffset>
+              <fields>{_field_with_enum("FieldOne", "Dup", "A_RegB_FieldOne")}</fields>
+            </register>
+          </registers>
+        </peripheral>
+        <peripheral>
+          <name>PeriphB</name>
+          <baseAddress>0x40001000</baseAddress>
+          <registers>
+            <register>
+              <name>RegA</name>
+              <addressOffset>0x0</addressOffset>
+              <fields>
+                {_field_with_enum("FieldOne", "Dup", "B_RegA_FieldOne")}
+                {_field_with_enum("UniqueFieldB", "Dup2", "UniqueB", bit_offset=4)}
+              </fields>
+            </register>
+          </registers>
+        </peripheral>
+        <peripheral>
+          <name>PeriphC</name>
+          <baseAddress>0x40002000</baseAddress>
+          <registers>
+            <register>
+              <name>RegC</name>
+              <addressOffset>0x0</addressOffset>
+              <fields>{_field_with_derived_enum("Consumer", derived_from)}</fields>
+            </register>
+          </registers>
+        </peripheral>
+    """)
+
+
+def _resolved_consumer_marker(svd: Path) -> str:
+    result = svd2py.SvdParser().convert(svd)
+    peripherals = {p["name"]: p for p in result["device"]["peripherals"]["peripheral"]}
+    field = peripherals["PeriphC"]["registers"]["register"][0]["fields"]["field"][0]
+    enumerated_values = field["enumeratedValues"]
+    assert "attributes" not in enumerated_values
+    return enumerated_values["enumeratedValue"][0]["name"]
+
+
 class TestDerivedFromResolution:
     def test_resolves_same_scope_chain_regardless_of_declaration_order(self, tmp_path: Path) -> None:
         # RegA derives from RegB, which itself derives from RegC (declared last).
@@ -315,3 +411,152 @@ class TestDerivedFromResolution:
 
         assert registers["RegA"]["attributes"]["derivedFrom"] == "RegB"
         assert "description" not in registers["RegA"]
+
+
+class TestEnumeratedValuesDerivedFromResolution:
+    def test_resolves_by_bare_name_when_unique(self, tmp_path: Path) -> None:
+        svd = _write(
+            tmp_path,
+            _device_with_registers(f"""
+                <register>
+                    <name>RegX</name>
+                    <addressOffset>0x0</addressOffset>
+                    <fields>
+                        {_field_with_enum("FieldX", "SharedEnum", "on")}
+                        {_field_with_derived_enum("FieldY", "SharedEnum", bit_offset=4)}
+                    </fields>
+                </register>
+            """),
+        )
+        result = svd2py.SvdParser().convert(svd)
+        fields = {f["name"]: f for f in result["device"]["peripherals"]["peripheral"][0]["registers"]["register"][0]["fields"]["field"]}
+        field_y = fields["FieldY"]
+
+        # FieldY's own <name> ("FieldYEnum") overrides the inherited one, while the
+        # enumeratedValue list itself is inherited wholesale from the origin.
+        assert field_y["enumeratedValues"]["name"] == "FieldYEnum"
+        assert field_y["enumeratedValues"]["enumeratedValue"][0]["name"] == "on"
+        assert "attributes" not in field_y["enumeratedValues"]
+
+    def test_resolves_with_full_qualification(self, tmp_path: Path) -> None:
+        svd = _write(tmp_path, _enum_ambiguity_device_with_consumer("PeriphA.RegA.FieldOne.Dup"))
+        assert _resolved_consumer_marker(svd) == "A_RegA_FieldOne"
+
+        svd = _write(tmp_path, _enum_ambiguity_device_with_consumer("PeriphB.RegA.FieldOne.Dup"))
+        assert _resolved_consumer_marker(svd) == "B_RegA_FieldOne"
+
+    def test_resolves_with_register_and_field_qualification_when_unambiguous(self, tmp_path: Path) -> None:
+        # "RegB" only exists under PeriphA, so "RegB.FieldOne.Dup" is unambiguous
+        # even without a peripheral prefix.
+        svd = _write(tmp_path, _enum_ambiguity_device_with_consumer("RegB.FieldOne.Dup"))
+        assert _resolved_consumer_marker(svd) == "A_RegB_FieldOne"
+
+    def test_resolves_with_field_qualification_when_unambiguous(self, tmp_path: Path) -> None:
+        # "UniqueFieldA" only exists once in the whole device.
+        svd = _write(tmp_path, _enum_ambiguity_device_with_consumer("UniqueFieldA.Dup2"))
+        assert _resolved_consumer_marker(svd) == "UniqueA"
+
+    def test_ambiguous_bare_name_raises(self, tmp_path: Path) -> None:
+        svd = _write(tmp_path, _enum_ambiguity_device_with_consumer("Dup"))
+        with pytest.raises(DerivedFromError, match="Ambiguous"):
+            svd2py.SvdParser().convert(svd)
+
+    def test_ambiguous_field_qualification_raises(self, tmp_path: Path) -> None:
+        # "FieldOne" repeats across all three "Dup" definitions, so qualifying
+        # with just the field name is still ambiguous.
+        svd = _write(tmp_path, _enum_ambiguity_device_with_consumer("FieldOne.Dup"))
+        with pytest.raises(DerivedFromError, match="Ambiguous"):
+            svd2py.SvdParser().convert(svd)
+
+    def test_ambiguous_register_and_field_qualification_raises(self, tmp_path: Path) -> None:
+        # "RegA" exists under both PeriphA and PeriphB, so "RegA.FieldOne.Dup" is
+        # still ambiguous without the peripheral prefix.
+        svd = _write(tmp_path, _enum_ambiguity_device_with_consumer("RegA.FieldOne.Dup"))
+        with pytest.raises(DerivedFromError, match="Ambiguous"):
+            svd2py.SvdParser().convert(svd)
+
+    def test_unresolvable_reference_raises(self, tmp_path: Path) -> None:
+        svd = _write(
+            tmp_path,
+            _device_with_registers(f"""
+                <register>
+                    <name>RegX</name>
+                    <addressOffset>0x0</addressOffset>
+                    <fields>{_field_with_derived_enum("FieldY", "DoesNotExist")}</fields>
+                </register>
+            """),
+        )
+        with pytest.raises(DerivedFromError, match="DoesNotExist"):
+            svd2py.SvdParser().convert(svd)
+
+    def test_too_many_qualifying_segments_raises(self, tmp_path: Path) -> None:
+        # At most peripheral.register.field.enumName (4 segments) is meaningful.
+        svd = _write(
+            tmp_path,
+            _device_with_registers(f"""
+                <register>
+                    <name>RegX</name>
+                    <addressOffset>0x0</addressOffset>
+                    <fields>{_field_with_derived_enum("FieldY", "Extra.PeriphA.RegA.FieldOne.Dup")}</fields>
+                </register>
+            """),
+        )
+        with pytest.raises(DerivedFromError, match="too many qualifying segments"):
+            svd2py.SvdParser().convert(svd)
+
+    def test_resolves_chain_regardless_of_declaration_order(self, tmp_path: Path) -> None:
+        # EnumA derives from EnumB, which itself derives from EnumC (declared last).
+        svd = _write(
+            tmp_path,
+            _device_with_registers(f"""
+                <register>
+                    <name>RegX</name>
+                    <addressOffset>0x0</addressOffset>
+                    <fields>
+                        {_field_with_derived_enum("FieldA", "EnumB", bit_offset=0)}
+                        <field>
+                          <name>FieldB</name>
+                          <bitOffset>4</bitOffset>
+                          <bitWidth>2</bitWidth>
+                          <enumeratedValues derivedFrom="EnumC">
+                            <name>EnumB</name>
+                          </enumeratedValues>
+                        </field>
+                        {_field_with_enum("FieldC", "EnumC", "root")}
+                    </fields>
+                </register>
+            """),
+        )
+        result = svd2py.SvdParser().convert(svd)
+        fields = {f["name"]: f for f in result["device"]["peripherals"]["peripheral"][0]["registers"]["register"][0]["fields"]["field"]}
+
+        assert fields["FieldA"]["enumeratedValues"]["enumeratedValue"][0]["name"] == "root"
+        assert fields["FieldB"]["enumeratedValues"]["enumeratedValue"][0]["name"] == "root"
+
+    def test_inherited_values_are_not_aliased_with_origin(self, tmp_path: Path) -> None:
+        svd = _write(
+            tmp_path,
+            _device_with_registers(f"""
+                <register>
+                    <name>RegX</name>
+                    <addressOffset>0x0</addressOffset>
+                    <fields>
+                        {_field_with_enum("FieldX", "SharedEnum", "on")}
+                        {_field_with_derived_enum("FieldY", "SharedEnum", bit_offset=4)}
+                    </fields>
+                </register>
+            """),
+        )
+        result = svd2py.SvdParser().convert(svd)
+        fields = {f["name"]: f for f in result["device"]["peripherals"]["peripheral"][0]["registers"]["register"][0]["fields"]["field"]}
+        origin_values = fields["FieldX"]["enumeratedValues"]["enumeratedValue"]
+        derived_values = fields["FieldY"]["enumeratedValues"]["enumeratedValue"]
+
+        assert derived_values is not origin_values
+        assert derived_values[0] is not origin_values[0]
+
+        derived_values[0]["name"] = "Mutated"
+        derived_values.append({"name": "Injected"})
+
+        assert origin_values[0]["name"] == "on"
+        assert len(origin_values) == 1
