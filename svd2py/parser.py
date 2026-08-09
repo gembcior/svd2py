@@ -30,14 +30,17 @@ from pathlib import Path
 from typing import Any
 from xml.etree import ElementTree as ET
 
+from .derive import resolve_derived_from as _resolve_derived_from
 from .objects import SvdDevice
 
 
 class SvdParser:
-    def convert(self, svd: Path | str) -> dict[str, Any]:
+    def convert(self, svd: Path | str, resolve_derived_from: bool = True) -> dict[str, Any]:
         if isinstance(svd, str):
             svd = Path(svd).expanduser().resolve()
         svd_tree_root = ET.parse(svd).getroot()
         device = SvdDevice(svd_tree_root)
         data = {"device": device.parse()}
+        if resolve_derived_from:
+            data = _resolve_derived_from(data)
         return data

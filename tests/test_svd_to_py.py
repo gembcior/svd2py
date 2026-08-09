@@ -34,9 +34,34 @@ import svd2py
 
 class TestCmsisSvdToPy:
     @pytest.mark.parametrize("test_file", ["file1", "file2", "file3", "file4", "file5", "file6", "file7", "file8", "file9"])
-    def test_parser(self, test_file: str, svddir: Path, yamldir: Path) -> None:
+    def test_parser_with_derived_from_disabled(self, test_file: str, svddir: Path, yamldir: Path) -> None:
+        # These fixtures capture the raw/unresolved output, i.e. the behavior before
+        # derivedFrom resolution was added. Files without any derivedFrom attribute
+        # are unaffected by the flag, so this also covers them.
         test_svd = svddir.joinpath(test_file + ".svd")
         test_yaml = yamldir.joinpath(test_file + ".yaml")
+        parser = svd2py.SvdParser()
+        result = parser.convert(test_svd, resolve_derived_from=False)
+        with test_yaml.open() as f:
+            expected = yaml.load(f, Loader=yaml.FullLoader)
+        assert result == expected
+
+    @pytest.mark.parametrize("test_file", ["file1", "file2", "file7", "file8", "file9"])
+    def test_parser(self, test_file: str, svddir: Path, yamldir: Path) -> None:
+        # None of these files use derivedFrom, so resolving it by default has no effect
+        # and they can be compared against the same fixtures used above.
+        test_svd = svddir.joinpath(test_file + ".svd")
+        test_yaml = yamldir.joinpath(test_file + ".yaml")
+        parser = svd2py.SvdParser()
+        result = parser.convert(test_svd)
+        with test_yaml.open() as f:
+            expected = yaml.load(f, Loader=yaml.FullLoader)
+        assert result == expected
+
+    @pytest.mark.parametrize("test_file", ["file3", "file4", "file5", "file6"])
+    def test_parser_resolves_derived_from_by_default(self, test_file: str, svddir: Path, yamldir: Path) -> None:
+        test_svd = svddir.joinpath(test_file + ".svd")
+        test_yaml = yamldir.joinpath("resolved").joinpath(test_file + ".yaml")
         parser = svd2py.SvdParser()
         result = parser.convert(test_svd)
         with test_yaml.open() as f:
