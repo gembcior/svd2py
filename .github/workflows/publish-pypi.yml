@@ -12,6 +12,8 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: python:3.12-trixie
+    permissions:
+      id-token: write
     steps:
       - name: Configure Git safe directory
         run: git config --global --add safe.directory '*'
