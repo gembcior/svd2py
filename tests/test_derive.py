@@ -100,6 +100,52 @@ class TestDerivedFromResolution:
         assert registers["RegB"]["addressOffset"] == 0
         assert registers["RegB"]["size"] == 16  # noqa: PLR2004
 
+    def test_inherited_nested_values_are_not_aliased_with_origin(self, tmp_path: Path) -> None:
+        # RegDerived inherits <fields> wholesale from RegOrigin (it doesn't redefine
+        # it). Mutating RegDerived's inherited nested structures must not affect
+        # RegOrigin's (or any other sibling derived from the same origin).
+        svd = _write(
+            tmp_path,
+            _device_with_registers("""
+                <register>
+                    <name>RegOrigin</name>
+                    <addressOffset>0x0</addressOffset>
+                    <fields>
+                        <field>
+                            <name>FieldA</name>
+                            <bitOffset>0</bitOffset>
+                            <bitWidth>1</bitWidth>
+                        </field>
+                    </fields>
+                </register>
+                <register derivedFrom="RegOrigin">
+                    <name>RegDerived</name>
+                    <addressOffset>0x4</addressOffset>
+                </register>
+                <register derivedFrom="RegOrigin">
+                    <name>RegDerivedSibling</name>
+                    <addressOffset>0x8</addressOffset>
+                </register>
+            """),
+        )
+        result = svd2py.SvdParser().convert(svd)
+        registers = {r["name"]: r for r in result["device"]["peripherals"]["peripheral"][0]["registers"]["register"]}
+
+        assert registers["RegDerived"]["fields"] is not registers["RegOrigin"]["fields"]
+        assert registers["RegDerived"]["fields"]["field"] is not registers["RegOrigin"]["fields"]["field"]
+        assert registers["RegDerived"]["fields"]["field"][0] is not registers["RegOrigin"]["fields"]["field"][0]
+        assert registers["RegDerived"]["fields"] is not registers["RegDerivedSibling"]["fields"]
+
+        # Mutate the derived register's inherited nested structures...
+        registers["RegDerived"]["fields"]["field"][0]["name"] = "Mutated"
+        registers["RegDerived"]["fields"]["field"].append({"name": "Injected"})
+
+        # ...and confirm the origin and the sibling derived register are untouched.
+        assert registers["RegOrigin"]["fields"]["field"][0]["name"] == "FieldA"
+        assert len(registers["RegOrigin"]["fields"]["field"]) == 1
+        assert registers["RegDerivedSibling"]["fields"]["field"][0]["name"] == "FieldA"
+        assert len(registers["RegDerivedSibling"]["fields"]["field"]) == 1
+
     def test_unresolvable_reference_raises(self, tmp_path: Path) -> None:
         svd = _write(
             tmp_path,

@@ -26,6 +26,7 @@
 
 from __future__ import annotations
 
+import copy
 from collections.abc import Callable
 from typing import Any, Literal
 
@@ -124,7 +125,10 @@ class _DerivedFromResolver:
         # Per the CMSIS-SVD spec: "Elements specified [on the deriving element]
         # override inherited values." Anything not specified by the deriving
         # element is inherited wholesale from the (already resolved) origin.
-        merged = origin | element
+        # Deep-copy the origin side so inherited nested dicts/lists (e.g. fields,
+        # addressBlock, enumeratedValues) are independent objects, not aliased
+        # with the origin element or any other sibling derived from it.
+        merged = copy.deepcopy(origin) | element
         attributes = dict(merged.get("attributes", {}))
         attributes.pop("derivedFrom", None)
         if attributes:
